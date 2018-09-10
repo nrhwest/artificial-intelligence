@@ -26,8 +26,9 @@ file.close()
 
 # plot male and female heights
 x = [i for i in range(len(female_heights))]
+
 pyplot.scatter(x, female_heights, color='r')
 pyplot.scatter(x, male_heights, color='b')
-
-
+y = [2000 * 0 + 5.65 for i in x]
+pyplot.plot(x, y, color='g')
 pyplot.show()
