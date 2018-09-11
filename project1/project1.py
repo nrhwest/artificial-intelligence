@@ -9,10 +9,10 @@ import numpy as npy
 
 # generate male and female weights and heights (data)
 male_weights = npy.random.normal(195.7, 20, 2000)
-male_heights = npy.random.normal(5.9, .1, 2000)
+male_heights = npy.random.normal(5.9, .2, 2000)
 
 female_weights = npy.random.normal(168.5, 20, 2000)
-female_heights = npy.random.normal(5.4, .1, 2000)
+female_heights = npy.random.normal(5.4, .2, 2000)
 
 # write data to file
 file = open("data.txt", "w")
