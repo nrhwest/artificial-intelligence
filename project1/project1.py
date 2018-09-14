@@ -4,15 +4,16 @@ Written by Nathan West, Yonathan Mekonnen, and Derrick Adjei
 09/09/18
 CMSC 409
 '''
+
 import matplotlib.pyplot as pyplot
 import numpy as npy
 
 # generate male and female weights and heights (data)
 male_weights = npy.random.normal(195.7, 20, 2000)
-male_heights = npy.random.normal(5.9, .2, 2000)
+male_heights = npy.random.normal(5.9, .1, 2000)
 
 female_weights = npy.random.normal(168.5, 20, 2000)
-female_heights = npy.random.normal(5.4, .2, 2000)
+female_heights = npy.random.normal(5.4, .1, 2000)
 
 # write data to file
 file = open("data.txt", "w")
@@ -26,9 +27,21 @@ file.close()
 
 # plot male and female heights
 x = [i for i in range(len(female_heights))]
+# 
+# pyplot.title("Male vs Female Heights")
+# pyplot.scatter(x, female_heights, color='r')
+# pyplot.scatter(x, male_heights, color='b')
+# y = [2000 * 0 + 5.65 for i in x]
+# pyplot.plot(x, y, color='g')
+# pyplot.xlabel("Student IDs")
+# pyplot.ylabel("Male and Female Heights")
+# pyplot.show()
 
-pyplot.scatter(x, female_heights, color='r')
-pyplot.scatter(x, male_heights, color='b')
-y = [2000 * 0 + 5.65 for i in x]
-pyplot.plot(x, y, color='g')
-pyplot.show()
+# plot male and female weights and heights
+import matplotlib.pyplot as pyplot2
+pyplot2.title("Both Weights and Heights Considered")
+pyplot2.scatter(male_heights, male_weights, color='b')
+pyplot2.scatter(female_heights, female_weights, color ='r')
+pyplot2.xlabel("Male and Female Heights")
+pyplot2.ylabel("Male and Female Weights")
+pyplot2.show()
