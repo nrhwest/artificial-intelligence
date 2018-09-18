@@ -31,8 +31,8 @@ x = [i for i in range(len(female_heights))]
 pyplot.title("Male vs Female Heights")
 pyplot.xlabel("Student IDs")
 pyplot.ylabel("Male and Female Heights")
-pyplot.scatter(x, female_heights, color='r')
-pyplot.scatter(x, male_heights, color='b')
+pyplot.scatter(x, female_heights, color='r', marker='*')
+pyplot.scatter(x, male_heights, color='b', marker='x')
 # calculate separation line
 y = [2000 * 0 + 5.65 for i in x]
 pyplot.plot(x, y, color='g')
@@ -40,6 +40,8 @@ pyplot.show()
 
 # plot male and female weights and heights
 import matplotlib.pyplot as pyplot2
+
+# calculate separation line
 yy = list()
 xx = list()
 for i in range(52,64):
@@ -53,8 +55,7 @@ for i in range(12):
 pyplot2.title("Both Weights and Heights Considered")
 pyplot2.xlabel("Male and Female Heights")
 pyplot2.ylabel("Male and Female Weights")
-# calculate separation line
-pyplot2.scatter(male_heights, male_weights, color='b')
-pyplot2.scatter(female_heights, female_weights, color ='r')
+pyplot2.scatter(male_heights, male_weights, color='b', marker='x')
+pyplot2.scatter(female_heights, female_weights, color ='r', marker='*')
 pyplot2.plot(xx, yy, color='g')
 pyplot2.show()
