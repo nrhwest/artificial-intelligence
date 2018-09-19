@@ -4,9 +4,12 @@ Written by Nathan West, Yonathan Mekonnen, and Derrick Adjei
 09/09/18
 CMSC 409
 
-Nathan West - Generated data, scenario A, wrote the report
+Nathan West - Generated data, scenario A, scenario B, wrote parts of report
 Derrick Adjei - Scenario B, accuracy and error calculations
-Yonation Mekonnen - Part B, scenario A
+Yonation Mekonnen - Part B, scenario A, wrote parts of report
+
+The accuracy, error, true positive, true negative, false positive,
+and false negative rates are all printed to the console. 
 '''
 
 import matplotlib.pyplot as pyplot
