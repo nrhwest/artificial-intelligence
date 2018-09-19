@@ -107,6 +107,11 @@ y = [2000 * 0 + 5.65 for i in x]
 pyplot.plot(x, y, color='g')
 pyplot.show()
 
+file = open('sep_line_a.txt', 'w')
+file.write('2000\n')
+file.write('5.65')
+file.close()
+
 # plot male and female weights and heights
 yy = list()
 xx = list()
@@ -115,6 +120,11 @@ for i in range(52,64):
 for i in xx:
     f = (-142.65)*(i) + 990
     yy.append(f)
+
+file = open('sep_line_b.txt', 'w')
+file.write('-142.65\n')
+file.write('990\n')
+file.write('1')
 
 pyplot.title("Both Weights and Heights Considered")
 pyplot.xlabel("Male and Female Heights")
