@@ -43,7 +43,11 @@ def above_below(weight, height, key, g = "male"):
 def acc_err(m_above, m_below, f_above, f_below):
     ACC = (m_above+f_below) / (m_above + m_below + f_above + f_below)
     ERR = 1 - ACC
-    return ACC, ERR
+    TP = m_above / (m_above+m_below)
+    FP = f_above / (f_above+f_below)
+    FN = m_below / (m_above+m_below)
+    TN = f_below / (f_above+f_below)
+    return ACC, ERR, TP, FP, FN, TN
 
 # write data to file
 file = open("data.txt", "w")
@@ -118,13 +122,22 @@ pyplot.plot(xx, yy, color='g')
 pyplot.show()
 
 
-f_acc, f_err = acc_err(f_male_above, f_male_below, f_female_above, f_female_below)
+f_acc, f_err, f_TP, f_FP, f_FN, f_TN = acc_err(f_male_above, f_male_below, f_female_above, f_female_below)
 # print(f_male_above, f_male_below, f_female_above, f_female_below)
 print("----Scenario A----")
 print("Acc: {0:.3f}".format(f_acc))
 print("Err: {0:.3f}".format(f_err))
+print("TP: {0:.3f}".format(f_TP))
+print("FP: {0:.3f}".format(f_FP))
+print("FN: {0:.3f}".format(f_FN))
+print("TN: {0:.3f}".format(f_TN))
+
 print("----Scenario B----")
-s_acc, s_err = acc_err(s_male_above, s_male_below, s_female_above, s_female_below)
+s_acc, s_err, s_TP, s_FP, s_FN, s_TN = acc_err(s_male_above, s_male_below, s_female_above, s_female_below)
 # print(s_male_above, s_male_below, s_female_above, s_female_below)
 print("Acc: {0:.3f}".format(s_acc))
 print("Err: {0:.3f}".format(s_err))
+print("TP: {0:.3f}".format(s_TP))
+print("FP: {0:.3f}".format(s_FP))
+print("FN: {0:.3f}".format(s_FN))
+print("TN: {0:.3f}".format(s_TN))
