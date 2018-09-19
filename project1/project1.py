@@ -3,6 +3,10 @@
 Written by Nathan West, Yonathan Mekonnen, and Derrick Adjei
 09/09/18
 CMSC 409
+
+Nathan West - Generated data, scenario A, wrote the report
+Derrick Adjei - Scenario B, accuracy and error calculations
+Yonation Mekonnen - Part B, scenario A
 '''
 
 import matplotlib.pyplot as pyplot
