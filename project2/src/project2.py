@@ -22,8 +22,8 @@ class Perceptron(object):
         n_iter: Passes over the training set
 
     Attributes:
-        w: Weights after fitting
-        error_lists: number of misclassifications in every epoch
+        w_: Weights after fitting
+        error_: number of misclassifications in every epoch
     '''
 
     def __init__(self, eta=0.01, n_iter=10):
@@ -47,7 +47,7 @@ class Perceptron(object):
                 self.w_[0] += update
                 errors += int(update != 0)
             self.errors_.append(errors)
-            
+
         return self
 
         def net_input(self, X):
@@ -72,6 +72,7 @@ def main():
     train_data = []
     test_data = []
 
+    # this splits the data into 75-25
     file = open('data.txt', 'r')
     for line in file:
         r = random.random()
@@ -92,8 +93,6 @@ def main():
         # x.append(join(parsed_data[0], parsed_data[1])
         y.append(parsed_data[1])
         desired_output.append(parsed_data[2])
-
-
 
     print(x)
     print(y)
