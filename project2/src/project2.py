@@ -88,9 +88,9 @@ def main():
     desired_output =[]
 
     for line in train_data:
-        parsed_data = line.split(',')
-        data = " ".join(parsed_data[0], parsed_data[1])
-        # x.append(join(parsed_data[0], parsed_data[1])
+        # parsed_data = line.split(',')
+        # data = " ".join(parsed_data[0], parsed_data[1])
+        x.append(parsed_data[0])
         y.append(parsed_data[1])
         desired_output.append(parsed_data[2])
 
