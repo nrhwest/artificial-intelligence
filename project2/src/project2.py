@@ -7,95 +7,71 @@ CMSC 409
 import random
 import numpy as np
 from numpy.random import seed
-import pandas as import pd
+import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
-from matplotlib import rcParams
-rcParams["figure.figsize"] = 10,5
-%matplotlib inline
+from sklearn.model_selection import train_test_split
 
-class Perceptron(object):
+iter = 1000
 
-    '''
-    Parameters:
-        eta: Learning rate (between 0.01 and 1.0)
-        n_iter: Passes over the training set
+def predict(row, weights):
+    activation = weights[0]
+    for i in range(len(row) - 1):
+        activation += weights[i + 1] * float(row[i])
+    return 1 if activation >= 0 else 0
 
-    Attributes:
-        w_: Weights after fitting
-        error_: number of misclassifications in every epoch
-    '''
+def train_weights(train, rate, epoch):
+    weights = [random.randint(-0.5, 0.5), random.randint(-0.5, 0.5), random.randint(-0.5, 0.5)]
 
-    def __init__(self, eta=0.01, n_iter=10):
-        self.eta = eta
-        self.n_iter = n_iter
+    true_neg, true_pos, false_neg, false_pos
+    tot_error = 0
+    count = 0
 
-    def fit(self, X, y):
-        '''
-        X: training features
-        y: desired output
-        '''
+    while (tot_error > 10**-5 and count < iter):
+        tot_error++
+        for i in range(train):
+            
 
-        self.w_ = np.zeros(1 + X.shape[i])
-        self.errors_ = []
 
-        for _ in range(self.n_iter):
-            errors = 0
-            for xi, target in zip(X, y):
-                update = self.eta * (target - self.predict_hard_activation(xi))
-                self.w_[1:] += update * xi
-                self.w_[0] += update
-                errors += int(update != 0)
-            self.errors_.append(errors)
 
-        return self
 
-        def net_input(self, X):
-            '''
-            calculate net net_input
-            '''
-            return np.dot(X, self.w_[1:]) + self.w_[0]
 
-        def predict_hard_activation(self, X):
-            '''
-            return class label (hard activition)
-            ''''
-            return np.where(self.net_input(X) >= 0.0, 1, 0)
 
-        def predict_hard_activation(self, X):
-            '''
-            return class label (soft activition)
-            ''''
-            return np.where(self.net_input(X) >= 0.0, 1, -1)
 
-def main():
-    train_data = []
-    test_data = []
+male_heights = []
+male_weights = []
 
-    # this splits the data into 75-25
-    file = open('data.txt', 'r')
-    for line in file:
-        r = random.random()
-        if r < 0.75:
-            train_data.append(line)
-        else:
-            test_data.append(line)
+female_heights = []
+female_weights = []
 
-    file.close()
+males = []
+females = []
 
-    x = []
-    y = []
-    desired_output =[]
+file = open("data.txt", mode='r')
 
-    for line in train_data:
-        # parsed_data = line.split(',')
-        # data = " ".join(parsed_data[0], parsed_data[1])
-        x.append(parsed_data[0])
-        y.append(parsed_data[1])
-        desired_output.append(parsed_data[2])
+for i in range(2000):
+    data = file.readline().split(",")
+    tmp = []
+    tmp.append(data[0])
+    tmp.append(data[1])
+    tmp.append(data[2])
+    males.append(tmp)
+    male_weights.append(data[0])
+    male_heights.append(data[1])
 
-    print(x)
-    print(y)
-    print(desired_output)
+# print(males)
 
-if __name__ == "__main__": main()
+for i in range(2000):
+    data = file.readline().split(",")
+    tmp = []
+    tmp.append(data[0])
+    tmp.append(data[1])
+    females.append(tmp)
+    female_weights.append(data[0])
+    female_heights.append(data[1])
+
+
+
+# testing shit
+for row in males:
+    prediction = predict(row, weights)
+    print("Expected=%d, Predicted=%d" % (int(row[-1]), prediction))
