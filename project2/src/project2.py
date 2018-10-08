@@ -6,15 +6,15 @@ CMSC 409
 
 import random
 import numpy as np
-import math
-import sys
 import matplotlib.pyplot as plt
+
 
 class Person:
     def __init__(self, weight, height, gender):
         self.weight = weight
         self.height = height
         self.gender = gender
+
 
 alpha = 0.30
 numEpoch = 1000
@@ -24,7 +24,7 @@ males = []
 females = []
 weights = []
 
-file = open("data.txt", mode = 'r')
+file = open("data.txt", mode='r')
 
 # read in male data
 for i in range(2000):
@@ -56,7 +56,6 @@ def predict(activation):
 
 
 def calculate_accuracy(males, females, train_size):
-
     tp = 0
     fp = 0
     tn = 0
@@ -105,7 +104,10 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         predictedOutput = predict(net)
         error = desired - predictedOutput
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net < 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
         weights[0] += alpha * error
         weights[1] += alpha * error * males[i].weight
@@ -120,9 +122,11 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[0] += alpha * error
         weights[1] += alpha * error * females[i].weight
         weights[2] += alpha * error * females[i].height
-        # print(str(weights) + "\n")
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net >= 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
 print("Accuracy for 25% hard activation")
 calculate_accuracy(males, females, train_size+1)
@@ -141,11 +145,12 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
         desired = 1
         predictedOutput = predict(net)
-        # print("Expected=%d, Predicted=%d" % (desired, predictedOutput))
         error = desired - predictedOutput
-        # print("from male predictedOutput = " + str(predictedOutput) + "\n")
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net < 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
         weights[0] += alpha * error
         weights[1] += alpha * error * males[i].weight
@@ -161,7 +166,10 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[1] += alpha * error * females[i].weight
         weights[2] += alpha * error * females[i].height
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net >= 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
 print("Accuracy for 75% hard activation")
 calculate_accuracy(males, females, train_size+1)
@@ -186,7 +194,10 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[1] += alpha * error * males[i].weight
         weights[2] += alpha * error * males[i].height
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net < 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
         net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
         desired = 0
@@ -198,7 +209,10 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[1] += alpha * error * females[i].weight
         weights[2] += alpha * error * females[i].height
 
-        errorAmount += 1 / 4000 if net < 0 else 0
+        if net >= 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
 
 print("Accuracy for 25%  soft activation")
 calculate_accuracy(males, females, train_size+1)
