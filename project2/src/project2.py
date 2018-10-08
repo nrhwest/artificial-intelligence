@@ -26,27 +26,55 @@ weights = []
 
 file = open("data.txt", mode = 'r')
 
-# read in male data
-for i in range(2000):
-    data = file.readline().split(",")
-    person = Person(float(data[0]), float(data[1]), data[2])
-    w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
-    h = 1 / (7.0 - 5.0) * (person.height - 5.0)
-    # plt.scatter(w, h, c = 'r')
-    males.append(person)
+x1 = list()
+y1 = list()
 
-# read in female data
-for i in range(2000):
-    data = file.readline().split(",")
-    person = Person(float(data[0]), float(data[1]), data[2])
-    w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
-    h = 1 / (7.0 - 5.0) * (person.height - 5.0)
-    # plt.scatter(w, h, c = 'b')
-    females.append(person)
+x2 = list()
+y2 = list()
+
+def graph():
+    plt.scatter(x1, y1, c = 'r')
+    plt.scatter(x2, y2, c = 'b')
+    xx = np.array(range(-2, 12))
+    x = np.empty(15)
+    yy = list()
+    for i in range(len(xx)):
+        x[i] = xx[i]/10
+    count = 0
+    for each in x:
+        slope = -(weights[0]/weights[2])/(weights[0]/weights[1])
+        intercept = -weights[0]/weights[2]
+        yy.append((slope*each)+each)
+    plt.plot(x, yy, c = 'black')
+    plt.show()
+
+def load():
+    # read in male data
+    for i in range(2000):
+        data = file.readline().split(",")
+        person = Person(float(data[0]), float(data[1]), data[2])
+        w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
+        h = 1 / (7.0 - 5.0) * (person.height - 5.0)
+        x1.append(w)
+        y1.append(h)
+        plt.scatter(w, h, c = 'r')
+        males.append(person)
+
+    # read in female data
+    for i in range(2000):
+        data = file.readline().split(",")
+        person = Person(float(data[0]), float(data[1]), data[2])
+        w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
+        h = 1 / (7.0 - 5.0) * (person.height - 5.0)
+        x2.append(w)
+        y2.append(h)
+        plt.scatter(w, h, c = 'b')
+        females.append(person)
 
 # plt.show()
-file.close()
+# file.close()
 
+load()
 
 def predict(activation):
     if activation > 0:
@@ -124,6 +152,7 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
 
         errorAmount += 1 / 4000 if net < 0 else 0
 
+graph()
 print("Accuracy for 25% hard activation")
 calculate_accuracy(males, females, train_size+1)
 
@@ -162,7 +191,7 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[2] += alpha * error * females[i].height
 
         errorAmount += 1 / 4000 if net < 0 else 0
-
+graph()
 print("Accuracy for 75% hard activation")
 calculate_accuracy(males, females, train_size+1)
 
@@ -200,6 +229,7 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
 
         errorAmount += 1 / 4000 if net < 0 else 0
 
+graph()
 print("Accuracy for 25%  soft activation")
 calculate_accuracy(males, females, train_size+1)
 
@@ -242,6 +272,6 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
             errorAmount += 1 / 4000
         else:
             errorAmount += 0
-
+graph()
 print("Accuracy for 75%  soft activation")
 calculate_accuracy(males, females, train_size+1)
