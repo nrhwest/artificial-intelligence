@@ -6,6 +6,7 @@ CMSC 409
 
 import random
 import numpy as np
+import math
 import sys
 import matplotlib.pyplot as plt
 
@@ -16,7 +17,7 @@ class Person:
         self.gender = gender
 
 alpha = 0.30
-n_epoch = 1000
+numEpoch = 1000
 gender = True
 
 males = []
@@ -30,7 +31,8 @@ for i in range(2000):
     data = file.readline().split(",")
     person = Person(float(data[0]), float(data[1]), data[2])
     w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
-    h = 1 / (7.0 - 5.0) * (person.height - 5.0)# plt.scatter(w, h, c = 'r')
+    h = 1 / (7.0 - 5.0) * (person.height - 5.0)
+    # plt.scatter(w, h, c = 'r')
     males.append(person)
 
 # read in female data
@@ -38,105 +40,208 @@ for i in range(2000):
     data = file.readline().split(",")
     person = Person(float(data[0]), float(data[1]), data[2])
     w = 1 / (250.00 - 120.00) * (person.weight - 120.00)
-    h = 1 / (7.0 - 5.0) * (person.height - 5.0)# plt.scatter(w, h, c = 'b')
+    h = 1 / (7.0 - 5.0) * (person.height - 5.0)
+    # plt.scatter(w, h, c = 'b')
     females.append(person)
 
 # plt.show()
 file.close()
 
-for i in range(3):
-    weights.append(round(random.uniform(-0.5, 0.5), 2))
-
 
 def predict(activation):
     if activation > 0:
         return 1
-    else :
+    else:
         return 0
 
-file2 = open("output.txt", mode = 'w')
+
+def calculate_accuracy(males, females, train_size):
+
+    tp = 0
+    fp = 0
+    tn = 0
+    fn = 0
+
+    for i in range(train_size, 2000):
+        sum = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
+        if (sum >= 0):
+            tp += 1
+        else:
+            fn += 1
+        sum = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
+        if sum < 0:
+            tn += 1
+        else:
+            fp += 1
+
+    tp = tp / (tp + fn)
+    fp = fp / (fp + tn)
+    tn = tn / (fp + tn)
+    fn = fn / (tp + fn)
+
+    accuracy = (tp + tn) / (tn + tp + fn + fp)
+    error = 1 - accuracy
+
+    print("TP = " + str(tp))
+    print("FP = " + str(fp))
+    print("TN = " + str(tn))
+    print("FN = " + str(fn))
+    print("Accuracy = " + str(accuracy))
+    print("Error = " + str(error) + "\n")
 
 
-# train for 25%
+# train with 25% data for hard activation
 epoch = 0
-sum_error = 1.0
-while (sum_error > 0.00001 and epoch < n_epoch):
+errorAmount = 1.0
+train_size = 500
+for i in range(3):
+    weights.append(round(random.uniform(-0.5, 0.5), 2))
+while (errorAmount > 0.00001 and epoch < numEpoch):
     epoch += 1
-    for i in range(500):
+    for i in range(train_size):
 
-        net = (males[i].weight * weights[0]) + (males[i].height * weights[1]) + weights[2]
+        net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
         desired = 1
-        prediction = predict(net)
-        # print("Expected=%d, Predicted=%d" % (desired, prediction))
-        error = desired - prediction
-        # print("from male prediction = " + str(prediction) + "\n")
+        predictedOutput = predict(net)
+        error = desired - predictedOutput
 
-        sum_error += 1 / 4000 if net < 0 else 0
+        errorAmount += 1 / 4000 if net < 0 else 0
 
         weights[0] += alpha * error
         weights[1] += alpha * error * males[i].weight
         weights[2] += alpha * error * males[i].height
-        print(str(weights) + "\n")
-
-        # print(weights, sep = ' ', end = '\n', file = sys.stdout, flush = False)
-        # file2.write("in male = " + "weights = " + str(weights) + "  error = " + str(error) + "\n")
-
-        # print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, alpha, error))
 
         net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
 
         desired = 0
-        prediction = predict(net)
-        error = desired - prediction
-        # print("from female prediction = " + str(prediction) + "\n")
+        predictedOutput = predict(net)
+        error = desired - predictedOutput
 
         weights[0] += alpha * error
         weights[1] += alpha * error * females[i].weight
         weights[2] += alpha * error * females[i].height
-        print(str(weights) + "\n")
+        # print(str(weights) + "\n")
 
-        sum_error += 1 / 4000 if net < 0 else 0
+        errorAmount += 1 / 4000 if net < 0 else 0
 
-        # file2.write("in female = " + "weights = " + str(weights) + "  error = " + str(error) + "\n")
+print("Accuracy for 25% hard activation")
+calculate_accuracy(males, females, train_size+1)
 
-# weights = train_weights(males, females, 100, alpha, n_epoch, gender)
-print(weights)
 
-while (sum_error > 0.00001 and epoch < n_epoch):
+# train with 75% for hard activation
+epoch = 0
+errorAmount = 1.0
+train_size = 1500
+for i in range(3):
+    weights.append(round(random.uniform(-0.5, 0.5), 2))
+while (errorAmount > 0.00001 and epoch < numEpoch):
     epoch += 1
-    for i in range(500):
+    for i in range(train_size):
 
-        net = (males[i].weight * weights[0]) + (males[i].height * weights[1]) + weights[2]
+        net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
         desired = 1
-        prediction = predict(net)
-        # print("Expected=%d, Predicted=%d" % (desired, prediction))
-        error = desired - prediction
-        # print("from male prediction = " + str(prediction) + "\n")
+        predictedOutput = predict(net)
+        # print("Expected=%d, Predicted=%d" % (desired, predictedOutput))
+        error = desired - predictedOutput
+        # print("from male predictedOutput = " + str(predictedOutput) + "\n")
 
-        sum_error += 1 / 4000 if net < 0 else 0
+        errorAmount += 1 / 4000 if net < 0 else 0
 
         weights[0] += alpha * error
         weights[1] += alpha * error * males[i].weight
         weights[2] += alpha * error * males[i].height
-        print(str(weights) + "\n")
-
-        # print(weights, sep = ' ', end = '\n', file = sys.stdout, flush = False)
-        # file2.write("in male = " + "weights = " + str(weights) + "  error = " + str(error) + "\n")
-
-        # print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, alpha, error))
 
         net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
 
         desired = 0
-        prediction = predict(net)
-        error = desired - prediction
-        # print("from female prediction = " + str(prediction) + "\n")
+        predictedOutput = predict(net)
+        error = desired - predictedOutput
 
         weights[0] += alpha * error
         weights[1] += alpha * error * females[i].weight
         weights[2] += alpha * error * females[i].height
-        print(str(weights) + "\n")
 
-        sum_error += 1 / 4000 if net < 0 else 0
+        errorAmount += 1 / 4000 if net < 0 else 0
 
-        # file2.write("in female = " + "weights = " + str(weights) + "  error = " + str(error) + "\n")
+print("Accuracy for 75% hard activation")
+calculate_accuracy(males, females, train_size+1)
+
+# train with 25% for soft activation
+epoch = 0
+errorAmount = 1.0
+train_size = 500
+for i in range(3):
+    weights.append(round(random.uniform(-0.5, 0.5), 2))
+while (errorAmount > 0.00001 and epoch < numEpoch):
+    epoch += 1
+    for i in range(train_size):
+
+        net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
+        desired = 1
+
+        predictedOutput = float(1 / (1 + np.exp(-net)))
+        error = desired - predictedOutput
+
+        weights[0] += alpha * error
+        weights[1] += alpha * error * males[i].weight
+        weights[2] += alpha * error * males[i].height
+
+        errorAmount += 1 / 4000 if net < 0 else 0
+
+        net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
+        desired = 0
+        predictedOutput = float(1 / (1 + np.exp(-net)))
+
+        error = desired - predictedOutput
+
+        weights[0] += alpha * error
+        weights[1] += alpha * error * females[i].weight
+        weights[2] += alpha * error * females[i].height
+
+        errorAmount += 1 / 4000 if net < 0 else 0
+
+print("Accuracy for 25%  soft activation")
+calculate_accuracy(males, females, train_size+1)
+
+# train with 75% for soft activation
+epoch = 0
+errorAmount = 1.0
+train_size = 1500
+for i in range(3):
+    weights.append(round(random.uniform(-0.5, 0.5), 2))
+while (errorAmount > 0.00001 and epoch < numEpoch):
+    epoch += 1
+    for i in range(train_size):
+
+        net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
+        desired = 1
+        predictedOutput = float(1 / (1 + np.exp(-net)))
+        error = desired - predictedOutput
+
+        weights[0] += alpha * error
+        weights[1] += alpha * error * males[i].weight
+        weights[2] += alpha * error * males[i].height
+
+        if net < 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
+
+        net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
+
+        desired = 0
+        predictedOutput = float(1 / (1 + np.exp(-net)))
+        error = desired - predictedOutput
+
+        weights[0] += alpha * error
+        weights[1] += alpha * error * females[i].weight
+        weights[2] += alpha * error * females[i].height
+        # print(str(weights) + "\n")
+
+        if net >= 0:
+            errorAmount += 1 / 4000
+        else:
+            errorAmount += 0
+
+print("Accuracy for 75%  soft activation")
+calculate_accuracy(males, females, train_size+1)
