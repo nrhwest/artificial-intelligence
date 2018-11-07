@@ -1,6 +1,6 @@
 '''
 Written by Nathan West, Yonathan Mekonnen, Derrick Adjei
-09 / 22 / 18
+11/07/18
 CMSC 409
 
 The dataset comes from the randomly generated data used in the first Project
@@ -10,10 +10,15 @@ Nathan, Yonathan wrote the code for the perceptron
 Derrick, Yonathan wrote the code for plotting the separation lines
 '''
 
+'''
+Questions
+Are we predicting the consumption for day 4 between the hours of 5am-8pm?
+'''
+
 import random
 import numpy as np
-# import matplotlib.pyplot as plt
-# import pandas as pd
+import matplotlib.pyplot as plt
+import pandas as pd
 
 alpha = 0.30
 numEpoch = 1000
@@ -35,12 +40,11 @@ class Energy:
         # self.day = day
 
 
-# def graph():
-#     plt.scatter(x1, y1, c='r')
-#     plt.scatter(x2, y2, c='b')
+def graph():
+    plt.scatter(x1, y1, c='r')
 #     xx = np.array(range(-2, 12))
 #     x = np.empty(15)
-#     yy = list()
+#     yy    = list()
 #     for i in range(len(xx)):
 #         x[i] = xx[i]/10
 #     for each in x:
@@ -48,11 +52,11 @@ class Energy:
 #         intercept = -weights[1]/weights[2]
 #         yy.append((slope*each)+each)
 #     plt.plot(x, yy, c='black')
-#     plt.show()
+    plt.show()
 
 
 def load(file):
-    # read in male data
+    # load data into energy objects
     for i in range(16):
         data = file.readline().split(",")
         energy = Energy(float(data[0]), float(data[1]))
@@ -60,9 +64,9 @@ def load(file):
         consum = 1 / (10.0 - 1.0) * (energy.consumption - 1.0)
         energy.hour = hr
         energy.consumption = consum
-        # x1.append(hr)
-        # y1.append(consum)
-        # plt.scatter(w, h, c='r')
+        x1.append(hr)
+        y1.append(consum)
+        # plt.scatter(hr, consum, c='r')
         norm_data.append(energy)
 
 
@@ -155,3 +159,5 @@ for i in range(len(norm_data)):
     print(i)
     print(norm_data[i].hour)
     print("{}\n".format(norm_data[i].consumption))
+
+graph()
