@@ -2,6 +2,12 @@
 Written by Nathan West, Yonathan Mekonnen, Derrick Adjei
 09 / 22 / 18
 CMSC 409
+
+The dataset comes from the randomly generated data used in the first Project
+
+Nathan wrote the code for setting up our data structure (class object)
+Nathan, Yonathan wrote the code for the perceptron
+Derrick, Yonathan wrote the code for plotting the separation lines
 '''
 
 import random
@@ -32,14 +38,22 @@ y1 = list()
 x2 = list()
 y2 = list()
 
+<<<<<<< HEAD
 def graph():
     plt.scatter(x1, y1, c = 'r')
     plt.scatter(x2, y2, c = 'b')
+=======
+
+def graph():
+    plt.scatter(x1, y1, c='r')
+    plt.scatter(x2, y2, c='b')
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
     xx = np.array(range(-2, 12))
     x = np.empty(15)
     yy = list()
     for i in range(len(xx)):
         x[i] = xx[i]/10
+<<<<<<< HEAD
     count = 0
     for each in x:
         slope = -(weights[0]/weights[2])/(weights[0]/weights[1])
@@ -48,6 +62,16 @@ def graph():
     plt.plot(x, yy, c = 'black')
     plt.show()
 
+=======
+    for each in x:
+        slope = -(weights[1]/weights[2])/(weights[0]/weights[1])
+        intercept = -weights[1]/weights[2]
+        yy.append((slope*each)+each)
+    plt.plot(x, yy, c='black')
+    plt.show()
+
+
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
 def load():
     # read in male data
     for i in range(2000):
@@ -57,7 +81,11 @@ def load():
         h = 1 / (7.0 - 5.0) * (person.height - 5.0)
         x1.append(w)
         y1.append(h)
+<<<<<<< HEAD
         plt.scatter(w, h, c = 'r')
+=======
+        plt.scatter(w, h, c='r')
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
         males.append(person)
 
     # read in female data
@@ -68,11 +96,19 @@ def load():
         h = 1 / (7.0 - 5.0) * (person.height - 5.0)
         x2.append(w)
         y2.append(h)
+<<<<<<< HEAD
         plt.scatter(w, h, c = 'b')
         females.append(person)
 
 # plt.show()
 # file.close()
+=======
+        plt.scatter(w, h, c='b')
+        females.append(person)
+
+
+load()
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
 
 load()
 
@@ -196,15 +232,23 @@ while (errorAmount > 0.00001 and epoch < numEpoch):
         weights[2] += alpha * error * females[i].height
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         errorAmount += 1 / 4000 if net < 0 else 0
 graph()
 =======
+=======
+        errorAmount += 1 / 4000 if net < 0 else 0
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
         if net >= 0:
             errorAmount += 1 / 4000
         else:
             errorAmount += 0
 
+<<<<<<< HEAD
 >>>>>>> 8050bfdbb174da65d509852e6ba1727f1b219fa1
+=======
+graph()
+>>>>>>> b3b1a49a7c0b1bf1b848e70dee051159fb852a1c
 print("Accuracy for 75% hard activation")
 calculate_accuracy(males, females, train_size+1)
 
