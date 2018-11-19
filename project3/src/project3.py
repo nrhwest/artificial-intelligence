@@ -21,54 +21,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-alpha = 0.30
-numEpoch = 10
-
-norm_data = list()
-weights = []
-train_size = 47
-
-times = list()
-output = list()
-
-x2 = list()
-y2 = list()
-
-
 def graph():
-    # plt.scatter(x1, y1, c='r')
-    # xx = np.array(range(-2, 12))
-    # x = np.empty(15)
-    # yy    = list()
-    # for i in range(len(xx)):
-    #     x[i] = xx[i]/10
-    # for each in x:
-    #     slope = -(weights[1]/weights[2])/(weights[0]/weights[1])
-    #     intercept = -weights[1]/weights[2]
-    #     yy.append((slope*each)+each)
-    # plt.plot(x, yy, c='black')
+    plt.scatter(x1, y1, c='r')
+#     xx = np.array(range(-2, 12))
+#     x = np.empty(15)
+#     yy    = list()
+#     for i in range(len(xx)):
+#         x[i] = xx[i]/10
+#     for each in x:
+#         slope = -(weights[1]/weights[2])/(weights[0]/weights[1])
+#         intercept = -weights[1]/weights[2]
+#         yy.append((slope*each)+each)
+#     plt.plot(x, yy, c='black')
     plt.show()
-
 
 class Energy:
     def __init__(self, hour, consumption):
         self.hour = hour
         self.consumption = consumption
 
-
 def load(file):
     # load data into energy objects
     test_objs = list()
     for i in range(16):
-        data = file.readline().split(",")
-        energy = Energy(float(data[0]), float(data[1]))
-        hr = (energy.hour - 5.00)  / (20.00 - 5.00)
-        consum = (energy.consumption - 2.0) / (10.0 - 2.0)
+        data    = file.readline().split(",")
+        energy  = Energy(float(data[0]), float(data[1]))
+        hr      = (energy.hour - 5.00)  / (20.00 - 5.00)
+        consum  = (energy.consumption - 2.0) / (10.0 - 2.0)
         energy.hour = hr
         energy.consumption = consum
         test_objs.append(energy)
     return test_objs
-
 
 def predict(activation, expected):
     if activation >= expected:
@@ -76,19 +59,19 @@ def predict(activation, expected):
     else:
         return expected
 
-
-def fit_model(numEpoch, train_size, alpha):
-    epoch = 0               # number of training cycle
+def fit_model(instance, numEpoch, train_size, alpha):
+    weights = list()
+    epoch = 0               #number of training cycle
     errorAmount = 1.0
-    for i in range(2):      # for input and bias
+    for i in range(2):      #for input and bias
         weights.append(round(random.uniform(-0.5, 0.5), 2))
     while (errorAmount > 0.00001 and epoch < numEpoch):
         epoch += 1
         for i in range(train_size):
-            bias = 1 * weights[0]
-            desired = output[i]
-            net = (times[i] * weights[1]) + bias
-            print("Time: {}".format(times[i]))
+            bias    = 1 * weights[0]
+            desired = instance[i].consumption
+            net = (instance[i].hour * weights[1]) + bias
+            print("Time: {}".format(instance[i].hour))
             predictedOutput = predict(net, desired)
             print("Net: {}, Expected: {}".format(net, desired))
             print("Prediction: {}".format(predictedOutput))
@@ -100,54 +83,28 @@ def fit_model(numEpoch, train_size, alpha):
                 errorAmount += 0
 
             weights[0] += alpha * error
-            weights[1] += alpha * error * desired
+            weights[1] += alpha * error * instance[i].hour
 
+alpha = 0.30
+numEpoch = 1000
 
-# def calculate_accuracy(males, females, train_size):
-#     tp = 0
-#     fp = 0
-#     tn = 0
-#     fn = 0
-#
-#     for i in range(train_size, 2000):
-#         sum = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
-#         if (sum >= 0):
-#             tp += 1
-#         else:
-#             fn += 1
-#         sum = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
-#         if sum < 0:
-#             tn += 1
-#         else:
-#             fp += 1
-#
-#     tp = tp / (tp + fn)
-#     fp = fp / (fp + tn)
-#     tn = tn / (fp + tn)
-#     fn = fn / (tp + fn)
-#
-#     accuracy = (tp + tn) / (tn + tp + fn + fp)
-#     error = 1 - accuracy
-#
-#     print("TP = " + str(tp))
-#     print("FP = " + str(fp))
-#     print("TN = " + str(tn))
-#     print("FN = " + str(fn))
-#     print("Accuracy = " + str(accuracy))
-#     print("Error = " + str(error) + "\n")
-
+weights = []
+train_size = 47
 
 file1 = open("data/train_data_1.txt", mode='r')
 file2 = open("data/train_data_2.txt", mode='r')
 file3 = open("data/train_data_3.txt", mode='r')
-file4 = open("data/test_data_4.txt", mode='r')
+file4 = open("data/train_data_4.txt", mode='r')
 
-day_one = load(file1)
-day_two = load(file2)
-day_three = load(file3)
-test = load(file4)
+one     = load(file1)
+fit_model(one, numEpoch, train_size, alpha)
 
-fit_model(numEpoch, train_size, alpha)
+two     = load(file2)
+
+three   = load(file3)
+
+test    = load(file4)
+
 # df = pd.read_csv(file1, delimiter=",")
 # training_file1 = file1.read().split('\n')
 # print(norm_data)
