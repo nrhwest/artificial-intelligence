@@ -26,7 +26,7 @@ numEpoch = 10
 
 norm_data = list()
 weights = []
-train_size = 47
+train_size = 16
 
 times = list()
 output = list()
@@ -65,6 +65,7 @@ def load(file):
         hr = (energy.hour - 5.00)  / (20.00 - 5.00)
         consum = (energy.consumption - 2.0) / (10.0 - 2.0)
         energy.hour = hr
+        times.append(hr)
         energy.consumption = consum
         test_objs.append(energy)
     return test_objs
@@ -84,9 +85,11 @@ def fit_model(numEpoch, train_size, alpha):
         weights.append(round(random.uniform(-0.5, 0.5), 2))
     while (errorAmount > 0.00001 and epoch < numEpoch):
         epoch += 1
+
+        print("Epoch : ", epoch)
         for i in range(train_size):
             bias = 1 * weights[0]
-            desired = output[i]
+            desired = test[i].consumption
             net = (times[i] * weights[1]) + bias
             print("Time: {}".format(times[i]))
             predictedOutput = predict(net, desired)
@@ -94,13 +97,15 @@ def fit_model(numEpoch, train_size, alpha):
             print("Prediction: {}".format(predictedOutput))
             error = desired - predictedOutput
 
-            if net < 0:
+            if net > 0:
                 errorAmount += 1 / (16*3)
             else:
                 errorAmount += 0
 
             weights[0] += alpha * error
             weights[1] += alpha * error * desired
+            print("weights = ", weights)
+            print()
 
 
 # def calculate_accuracy(males, females, train_size):
