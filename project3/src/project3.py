@@ -22,24 +22,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 alpha = 0.30
-numEpoch = 1000
+numEpoch = 10
 
 norm_data = list()
 weights = []
-train_size = 500
-x1 = list()
-y1 = list()
+train_size = 47
+
+times = list()
+output = list()
 
 x2 = list()
 y2 = list()
-
-
-class Energy:
-    def __init__(self, hour, consumption):
-        self.hour = hour
-        self.consumption = consumption
-        # self.day = day
-
 
 def graph():
     plt.scatter(x1, y1, c='r')
@@ -55,27 +48,67 @@ def graph():
 #     plt.plot(x, yy, c='black')
     plt.show()
 
+class Energy:
+    def __init__(self, hour, consumption):
+        self.hour = hour
+        self.consumption = consumption
+
+# def load(file):
+#     # load data into energy objects
+#     for i in range(16):
+#         data    = file.readline().split(",")
+#         energy  = Energy(float(data[0]), float(data[1]))
+#         hr      = (energy.hour - 5.00)  / (20.00 - 5.00)
+#         consum  = (energy.consumption - 2.0) / (10.0 - 2.0)
+#         energy.hour = hr
+#         energy.consumption = consum
+#         times.append(hr)
+#         output.append(consum)
+#         norm_data.append(energy)
 
 def load(file):
     # load data into energy objects
+    test_objs = list()
     for i in range(16):
-        data = file.readline().split(",")
-        energy = Energy(float(data[0]), float(data[1]))
-        hr = 1 / (24.00 - 1.00) * (energy.hour - 1.00)
-        consum = 1 / (10.0 - 1.0) * (energy.consumption - 1.0)
+        data    = file.readline().split(",")
+        energy  = Energy(float(data[0]), float(data[1]))
+        hr      = (energy.hour - 5.00)  / (20.00 - 5.00)
+        consum  = (energy.consumption - 2.0) / (10.0 - 2.0)
         energy.hour = hr
         energy.consumption = consum
-        x1.append(hr)
-        y1.append(consum)
-        # plt.scatter(hr, consum, c='r')
-        norm_data.append(energy)
+        test_objs.append(energy)
+        return test_objs
 
-
-def predict(activation):
-    if activation > 0:
-        return 1
+def predict(activation, expected):
+    if activation >= expected:
+        return activation
     else:
-        return 0
+        return expected
+
+def fit_model(numEpoch, train_size, alpha):
+    epoch = 0               #number of training cycle
+    errorAmount = 1.0
+    for i in range(2):      #for input and bias
+        weights.append(round(random.uniform(-0.5, 0.5), 2))
+    while (errorAmount > 0.00001 and epoch < numEpoch):
+        epoch += 1
+        for i in range(train_size):
+            bias    = 1 * weights[0]
+            desired = output[i]
+            net = (times[i] * weights[1]) + bias
+            print("Time: {}".format(times[i]))
+            predictedOutput = predict(net, desired)
+            print("Net: {}, Expected: {}".format(net, desired))
+            print("Prediction: {}".format(predictedOutput))
+            error = desired - predictedOutput
+
+            if net < 0:
+                errorAmount += 1 / (16*3)
+            else:
+                errorAmount += 0
+
+            weights[0] += alpha * error
+            weights[1] += alpha * error * desired
 
 
 def calculate_accuracy(males, females, train_size):
@@ -112,44 +145,25 @@ def calculate_accuracy(males, females, train_size):
     print("Error = " + str(error) + "\n")
 
 
-# def fit_model(numEpoch, train_size, alpha):
-#     # train with 25% data for hard activation
-#     epoch = 0
-#     errorAmount = 1.0
-#     for i in range(3):
-#         weights.append(round(random.uniform(-0.5, 0.5), 2))
-#         while (errorAmount > 0.00001 and epoch < numEpoch):
-#             epoch += 1
-#             for i in range(train_size):
-#
-#                 net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
-#                 desired = 1
-#                 predictedOutput = predict(net)
-#                 error = desired - predictedOutput
-#
-#                 if net < 0:
-#                     errorAmount += 1 / 4000
-#                 else:
-#                     errorAmount += 0
-#
-#                 weights[0] += alpha * error
-#                 weights[1] += alpha * error * males[i].weight
-#                 weights[2] += alpha * error * males[i].height
-#
-#                 if net >= 0:
-#                     errorAmount += 1 / 4000
-#                 else:
-#                     errorAmount += 0
 
 
 file1 = open("data/train_data_1.txt", mode='r')
-load(file1)
+file2 = open("data/train_data_2.txt", mode='r')
+file3 = open("data/train_data_3.txt", mode='r')
+file4 = open("data/train_data_4.txt", mode='r')
+
+one     = load(file1)
+two     = load(file2)
+three   = load(file3)
+test    = load_test(file4)
+
+fit_model(numEpoch, train_size, alpha)
 # df = pd.read_csv(file1, delimiter=",")
 # training_file1 = file1.read().split('\n')
 # print(norm_data)
-for i in range(len(norm_data)):
-    print(i)
-    print(norm_data[i].hour)
-    print("{}\n".format(norm_data[i].consumption))
+# for i in range(len(norm_data)):
+#     print(i)
+#     print(norm_data[i].hour)
+#     print("{}\n".format(norm_data[i].consumption))
 
-graph()
+# graph()
