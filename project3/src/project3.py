@@ -2,9 +2,7 @@
 Written by Nathan West, Yonathan Mekonnen, Derrick Adjei
 11/07/18
 CMSC 409
-
 The dataset comes from the randomly generated data used in the first Project
-
 Nathan wrote the code for setting up our data structure (class object)
 Nathan, Yonathan wrote the code for the perceptron
 Derrick, Yonathan wrote the code for plotting the separation lines
@@ -21,23 +19,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-<<<<<<< HEAD
-alpha = 0.30
-numEpoch = 10
-
-norm_data = list()
-weights = []
-train_size = 16
-
-times = list()
-output = list()
-
-x2 = list()
-y2 = list()
-
-
-=======
->>>>>>> 21bf778f514ff4ea82a132ea3a2817d8f3fe14ff
 def graph():
     plt.scatter(x1, y1, c='r')
 #     xx = np.array(range(-2, 12))
@@ -66,7 +47,6 @@ def load(file):
         hr      = (energy.hour - 5.00)  / (20.00 - 5.00)
         consum  = (energy.consumption - 2.0) / (10.0 - 2.0)
         energy.hour = hr
-        times.append(hr)
         energy.consumption = consum
         test_objs.append(energy)
     return test_objs
@@ -85,72 +65,23 @@ def fit_model(instance, numEpoch, train_size, alpha):
         weights.append(round(random.uniform(-0.5, 0.5), 2))
     while (errorAmount > 0.00001 and epoch < numEpoch):
         epoch += 1
-
-        print("Epoch : ", epoch)
         for i in range(train_size):
-<<<<<<< HEAD
-            bias = 1 * weights[0]
-            desired = test[i].consumption
-            net = (times[i] * weights[1]) + bias
-            print("Time: {}".format(times[i]))
-=======
             bias    = 1 * weights[0]
             desired = instance[i].consumption
             net = (instance[i].hour * weights[1]) + bias
             print("Time: {}".format(instance[i].hour))
->>>>>>> 21bf778f514ff4ea82a132ea3a2817d8f3fe14ff
             predictedOutput = predict(net, desired)
             print("Net: {}, Expected: {}".format(net, desired))
             print("Prediction: {}".format(predictedOutput))
             error = desired - predictedOutput
 
-            if net > 0:
+            if net < 0:
                 errorAmount += 1 / (16*3)
             else:
                 errorAmount += 0
 
             weights[0] += alpha * error
-<<<<<<< HEAD
-            weights[1] += alpha * error * desired
-            print("weights = ", weights)
-            print()
-
-
-# def calculate_accuracy(males, females, train_size):
-#     tp = 0
-#     fp = 0
-#     tn = 0
-#     fn = 0
-#
-#     for i in range(train_size, 2000):
-#         sum = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
-#         if (sum >= 0):
-#             tp += 1
-#         else:
-#             fn += 1
-#         sum = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
-#         if sum < 0:
-#             tn += 1
-#         else:
-#             fp += 1
-#
-#     tp = tp / (tp + fn)
-#     fp = fp / (fp + tn)
-#     tn = tn / (fp + tn)
-#     fn = fn / (tp + fn)
-#
-#     accuracy = (tp + tn) / (tn + tp + fn + fp)
-#     error = 1 - accuracy
-#
-#     print("TP = " + str(tp))
-#     print("FP = " + str(fp))
-#     print("TN = " + str(tn))
-#     print("FN = " + str(fn))
-#     print("Accuracy = " + str(accuracy))
-#     print("Error = " + str(error) + "\n")
-=======
             weights[1] += alpha * error * instance[i].hour
->>>>>>> 21bf778f514ff4ea82a132ea3a2817d8f3fe14ff
 
 alpha = 0.30
 numEpoch = 1000
