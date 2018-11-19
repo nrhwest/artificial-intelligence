@@ -19,20 +19,16 @@ What are we using the 3 different architectures for? training, then predicting d
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+import decimal as d
+d.getcontext().prec = 10
 
-def graph():
-    plt.scatter(x1, y1, c='r')
-#     xx = np.array(range(-2, 12))
-#     x = np.empty(15)
-#     yy    = list()
-#     for i in range(len(xx)):
-#         x[i] = xx[i]/10
-#     for each in x:
-#         slope = -(weights[1]/weights[2])/(weights[0]/weights[1])
-#         intercept = -weights[1]/weights[2]
-#         yy.append((slope*each)+each)
-#     plt.plot(x, yy, c='black')
+
+
+def graph(obj_list):
+    colors = ['b', 'g', 'r' , 'c', 'm','y' , 'k' , 'w']
+    for each in range(len(obj_list)):
+        for i in obj_list[each]:
+            plt.scatter(i.hour, i.consumption, c=colors[each])
     plt.show()
 
 class Energy:
@@ -57,12 +53,13 @@ def predict(activation, expected):
     if activation >= expected:
         return activation
     else:
-        return expected
+        return -activation
+
 
 def fit_model(instance, numEpoch, train_size, alpha):
-    weights = list()
     epoch = 0               #number of training cycle
     errorAmount = 1.0
+    answers = list()
     for i in range(2):      #for input and bias
         weights.append(round(random.uniform(-0.5, 0.5), 2))
     while (errorAmount > 0.00001 and epoch < numEpoch):
@@ -70,40 +67,57 @@ def fit_model(instance, numEpoch, train_size, alpha):
         for i in range(train_size):
             bias    = 1 * weights[0]
             desired = instance[i].consumption
-            net = (instance[i].hour * weights[1]) + bias
-            print("Time: {}".format(instance[i].hour))
+            net = (instance[i].hour * weights[1]) + ((instance[i].hour) * weights[1] ** 2)+ bias
             predictedOutput = predict(net, desired)
-            print("Net: {}, Expected: {}".format(net, desired))
-            print("Prediction: {}".format(predictedOutput))
             error = desired - predictedOutput
 
             if net < 0:
                 errorAmount += 1 / (16*3)
             else:
                 errorAmount += 0
-
             weights[0] += alpha * error
             weights[1] += alpha * error * instance[i].hour
+            if epoch + 1 == numEpoch:
+                answers.append(Energy(instance[i].hour, weights[1]))
 
-alpha = 0.30
-numEpoch = 1000
+def model_predict(test):
+    answers = list()
+    for instance in test:
+        bias    = 1 * weights[0]
+        desired = instance.consumption
+        net = (instance.hour * weights[1]) + ((instance.hour) * weights[1] ** 2)+ bias
+
+        predictedOutput = predict(net, desired)
+        answers.append(Energy(instance.hour, predictedOutput))
+
+    stuff = [one, answers, test]
+    graph(stuff)
+
+
+
+alpha = 0.10
+numEpoch = 500
 
 weights = []
-train_size = 47
+train_size = 16
 
 file1 = open("data/train_data_1.txt", mode='r')
 file2 = open("data/train_data_2.txt", mode='r')
 file3 = open("data/train_data_3.txt", mode='r')
-file4 = open("data/train_data_4.txt", mode='r')
-
-one     = load(file1)
-fit_model(one, numEpoch, train_size, alpha)
-
-two     = load(file2)
-
-three   = load(file3)
+file4 = open("data/test_data_4.txt", mode='r')
 
 test    = load(file4)
+one     = load(file1)
+fit_model(one, numEpoch, train_size, alpha)
+model_predict(test)
+
+weights.clear()
+two     = load(file2)
+fit_model(two, numEpoch, train_size, alpha)
+
+weights.clear()
+three   = load(file3)
+fit_model(three, numEpoch, train_size, alpha)
 
 # df = pd.read_csv(file1, delimiter=",")
 # training_file1 = file1.read().split('\n')
