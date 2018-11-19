@@ -2,9 +2,7 @@
 Written by Nathan West, Yonathan Mekonnen, Derrick Adjei
 11/07/18
 CMSC 409
-
 The dataset comes from the randomly generated data used in the first Project
-
 Nathan wrote the code for setting up our data structure (class object)
 Nathan, Yonathan wrote the code for the perceptron
 Derrick, Yonathan wrote the code for plotting the separation lines
