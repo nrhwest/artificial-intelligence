@@ -21,7 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-alpha = 0.30
+alpha = 0.3
 numEpoch = 1000
 
 norm_data = list()
@@ -72,84 +72,88 @@ def load(file):
 
 
 def predict(activation):
-    if activation > 0:
+    if activation > 1:
         return 1
     else:
-        return 0
+        return -1
 
 
-def calculate_accuracy(males, females, train_size):
-    tp = 0
-    fp = 0
-    tn = 0
-    fn = 0
-
-    for i in range(train_size, 2000):
-        sum = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
-        if (sum >= 0):
-            tp += 1
-        else:
-            fn += 1
-        sum = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
-        if sum < 0:
-            tn += 1
-        else:
-            fp += 1
-
-    tp = tp / (tp + fn)
-    fp = fp / (fp + tn)
-    tn = tn / (fp + tn)
-    fn = fn / (tp + fn)
-
-    accuracy = (tp + tn) / (tn + tp + fn + fp)
-    error = 1 - accuracy
-
-    print("TP = " + str(tp))
-    print("FP = " + str(fp))
-    print("TN = " + str(tn))
-    print("FN = " + str(fn))
-    print("Accuracy = " + str(accuracy))
-    print("Error = " + str(error) + "\n")
-
-
-# def fit_model(numEpoch, train_size, alpha):
-#     # train with 25% data for hard activation
-#     epoch = 0
-#     errorAmount = 1.0
-#     for i in range(3):
-#         weights.append(round(random.uniform(-0.5, 0.5), 2))
-#         while (errorAmount > 0.00001 and epoch < numEpoch):
-#             epoch += 1
-#             for i in range(train_size):
+# def calculate_accuracy(males, females, train_size):
+#     tp = 0
+#     fp = 0
+#     tn = 0
+#     fn = 0
 #
-#                 net = (males[i].weight * weights[1]) + (males[i].height * weights[2]) + weights[0]
-#                 desired = 1
-#                 predictedOutput = predict(net)
-#                 error = desired - predictedOutput
+#     for i in range(train_size, 2000):
+#         net = (norm_data[i].weight * weights[1]) + weights[0]
+#         if (net >= 1):
+#             tp += 1
+#         else:
+#             fn += 1
+#         net = (females[i].weight * weights[1]) + (females[i].height * weights[2]) + weights[0]
+#         if sum < 0:
+#             tn += 1
+#         else:
+#             fp += 1
 #
-#                 if net < 0:
-#                     errorAmount += 1 / 4000
-#                 else:
-#                     errorAmount += 0
+#     tp = tp / (tp + fn)
+#     fp = fp / (fp + tn)
+#     tn = tn / (fp + tn)
+#     fn = fn / (tp + fn)
 #
-#                 weights[0] += alpha * error
-#                 weights[1] += alpha * error * males[i].weight
-#                 weights[2] += alpha * error * males[i].height
+#     accuracy = (tp + tn) / (tn + tp + fn + fp)
+#     error = 1 - accuracy
 #
-#                 if net >= 0:
-#                     errorAmount += 1 / 4000
-#                 else:
-#                     errorAmount += 0
+#     print("TP = " + str(tp))
+#     print("FP = " + str(fp))
+#     print("TN = " + str(tn))
+#     print("FN = " + str(fn))
+#     print("Accuracy = " + str(accuracy))
+#     print("Error = " + str(error) + "\n")
+#
+
+def fit_model(numEpoch, train_size, alpha):
+    epoch = 0
+    errorAmount = 1.0
+    for i in range(3):
+        weights.append(round(random.uniform(-0.5, 0.5), 2))
+    while (errorAmount > 0.00001 and epoch < numEpoch):
+        epoch += 1
+        for i in range(train_size):
+
+            net = (norm_data[i].consumption * weights[0]) + weights[1]
+            desired = 1
+            predictedOutput = predict(net)
+            error = desired - predictedOutput
+
+            # if net < 0:
+            #     errorAmount += 1 / 4000
+            # else:
+            #     errorAmount += 0
+
+            weights[0] += alpha * error * norm_data[i].consumption
+            weights[1] += alpha * error
+            print(weights)
+
+            # if net >= 0:
+            #     errorAmount += 1 / 4000
+            # else:
+            #     errorAmount += 0
 
 
-file1 = open("data/train_data_1.txt", mode='r')
-load(file1)
+train_data1 = open("data/train_data_1.txt", mode='r')
+train_data2 = open("data/train_data_2.txt", mode='r')
+train_data3 = open("data/train_data_3.txt", mode='r')
+test_data = open("data/test_data_4.txt", mode='r')
+
+load(train_data1)
 # df = pd.read_csv(file1, delimiter=",")
 # training_file1 = file1.read().split('\n')
 # print(norm_data)
-for i in range(len(norm_data)):
-    print(i)
-    print(norm_data[i].hour)
-    print("{}\n".format(norm_data[i].consumption))
+
+for i in range(3):
+    if (i == 1):
+        fit_model(numEpoch, 16, alpha)
+
 
 graph()
