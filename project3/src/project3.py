@@ -2,7 +2,9 @@
 Written by Nathan West, Yonathan Mekonnen, Derrick Adjei
 11/07/18
 CMSC 409
+
 The dataset comes from the randomly generated data used in the first Project
+
 Nathan wrote the code for setting up our data structure (class object)
 Nathan, Yonathan wrote the code for the perceptron
 Derrick, Yonathan wrote the code for plotting the separation lines
@@ -18,15 +20,25 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import decimal as d
-d.getcontext().prec = 10
-
+import math
 
 
 def graph(obj_list):
     colors = ['b', 'g', 'r' , 'c', 'm','y' , 'k' , 'w']
     for each in range(len(obj_list)):
-        for i in obj_list[each]:
-            plt.scatter(i.hour, i.consumption, c=colors[each])
+        if each == len(obj_list) - 1:
+            x = list()
+            y = list()
+            for i in obj_list[each]:
+                x.append(i.hour)
+                y.append(i.consumption)
+            plt.plot(x, y, c=colors[each])
+            plt.xlabel('Hour')
+            plt.ylabel('Consumption')
+
+        else:
+            for i in obj_list[each]:
+                plt.scatter(i.hour, i.consumption, c=colors[each])
     plt.show()
 
 class Energy:
@@ -54,46 +66,87 @@ def predict(activation, expected):
         return -activation
 
 
-def fit_model(instance, numEpoch, train_size, alpha):
+def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
     epoch = 0               #number of training cycle
     errorAmount = 1.0
     answers = list()
     for i in range(2):      #for input and bias
         weights.append(round(random.uniform(-0.5, 0.5), 2))
-    while (errorAmount > 0.00001 and epoch < numEpoch):
+    while (epoch < numEpoch):
         epoch += 1
         for i in range(train_size):
             bias    = 1 * weights[0]
             desired = instance[i].consumption
-            net = (instance[i].hour * weights[1]) + ((instance[i].hour) * weights[1] ** 2)+ bias
-            predictedOutput = predict(net, desired)
-            error = desired - predictedOutput
+            net = 0.0
+            if poly == 1:
+                net = (instance[i].hour * weights[1]) + bias
+            elif poly == 2:
+                try:
+                    net = (instance[i].hour * weights[1]) + (instance[i].hour * (weights[1] ** 2))+ bias
+                except OverflowError as o:
+                    net = d.Decimal(net)
 
-            if net < 0:
-                errorAmount += 1 / (16*3)
+            elif poly == 3:
+                try:
+                    net = (instance[i].hour * weights[1]) + (instance[i].hour * (weights[1] ** 2))+ (instance[i].hour * (weights[1] ** 3))+ bias
+                except OverflowError as o:
+                    net = d.Decimal(net)
+
+            predictedOutput = predict(net, desired)
+
+            try:
+                error = desired - predictedOutput
+            except TypeError:
+                error = d.Decimal(desired) - d.Decimal(predictedOutput)
+
+
+            if net >= desired:
+                errorAmount += 1 / 16
             else:
                 errorAmount += 0
-            weights[0] += alpha * error
-            weights[1] += alpha * error * instance[i].hour
+
+            try:
+                weights[0] += (alpha * error)
+                weights[1] += (alpha * error) * instance[i].hour
+            except TypeError:
+                weights[0] += (float(d.Decimal(alpha)) * float(d.Decimal(error)))
+                weights[1] += (float(d.Decimal(alpha)) * float(d.Decimal(error))) * float(d.Decimal(instance[i].hour))
+
             if epoch + 1 == numEpoch:
                 answers.append(Energy(instance[i].hour, weights[1]))
+    stuff = [test, answers]
+    graph(stuff)
+    return answers, errorAmount
 
-def model_predict(test):
+def model_predict(model, test, poly = 1):
     answers = list()
-    for instance in test:
-        bias    = 1 * weights[0]
-        desired = instance.consumption
-        net = (instance.hour * weights[1]) + ((instance.hour) * weights[1] ** 2)+ bias
+    bias    = 1 * test[0].consumption
+    for i in range(1,len(test)):
+        net = 0.0
+        desired = test[i].consumption
+        if poly == 1:
+            net = (test[i].hour * model[i].consumption) + bias
+        elif poly == 2:
+            try:
+                net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ bias
+            except OverflowError as o:
+                net = d.Decimal(net)
+
+        elif poly == 3:
+            try:
+                net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ (test[i].hour * (model[i].consumption ** 3))+ bias
+            except OverflowError as o:
+                net = d.Decimal(net)
 
         predictedOutput = predict(net, desired)
-        answers.append(Energy(instance.hour, predictedOutput))
-
-    stuff = [one, answers, test]
-    graph(stuff)
+        answers.append(Energy(test[i].hour, weights[1]*float(predictedOutput)))
 
 
 
-alpha = 0.10
+
+
+
+alpha = 0.3
 numEpoch = 500
 
 weights = []
@@ -106,23 +159,27 @@ file4 = open("data/test_data_4.txt", mode='r')
 
 test    = load(file4)
 one     = load(file1)
-fit_model(one, numEpoch, train_size, alpha)
-model_predict(test)
+model_one_1, error1 = fit_model(one, numEpoch, train_size, alpha, 1)
+model_one_2, error2 = fit_model(one, numEpoch, train_size, alpha, 2)
+model_one_3, error3 = fit_model(one, numEpoch, train_size, alpha, 3)
+one_models = [model_one_1, model_one_2, model_one_3]
+for i in range(len(one_models)):
+    model_predict(one_models[i], test, i+1)
 
 weights.clear()
 two     = load(file2)
-fit_model(two, numEpoch, train_size, alpha)
+model_two_1, error1 = fit_model(two, numEpoch, train_size, alpha, 1)
+model_two_2, error2 = fit_model(two, numEpoch, train_size, alpha, 2)
+model_two_3, error3 = fit_model(two, numEpoch, train_size, alpha, 3)
+two_models = [model_two_1, model_two_2, model_two_3]
+for i in range(len(two_models)):
+    model_predict(two_models[i], test, i+1)
 
 weights.clear()
-three   = load(file3)
-fit_model(three, numEpoch, train_size, alpha)
-
-# df = pd.read_csv(file1, delimiter=",")
-# training_file1 = file1.read().split('\n')
-# print(norm_data)
-# for i in range(len(norm_data)):
-#     print(i)
-#     print(norm_data[i].hour)
-#     print("{}\n".format(norm_data[i].consumption))
-
-# graph()
+three     = load(file3)
+model_three_1, error1 = fit_model(three, numEpoch, train_size, alpha, 1)
+model_three_2, error2 = fit_model(three, numEpoch, train_size, alpha, 2)
+model_three_3, error3 = fit_model(three, numEpoch, train_size, alpha, 3)
+three_models = [model_three_1, model_three_2, model_three_3]
+for i in range(len(three_models)):
+    model_predict(three_models[i], test, i+1)
