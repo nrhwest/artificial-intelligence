@@ -35,6 +35,7 @@ def graph(obj_list):
             plt.plot(x, y, c=colors[each])
             plt.xlabel('Hour')
             plt.ylabel('Consumption')
+            plt.title('Prediction of Energy Consumption')
 
         else:
             for i in obj_list[each]:
