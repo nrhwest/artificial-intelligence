@@ -23,11 +23,11 @@ import decimal as d
 import math
 
 
-def graph(obj_list, poly):
+def graph(obj_list, poly, title):
     colors = ['b', 'g', 'r' , 'c', 'm','y' , 'k' , 'w']
     plt.xlabel('Hour')
     plt.ylabel('Consumption')
-    plt.title('Prediction of Energy w/ degree '+str(poly))
+    plt.title('Prediction of Energy w/ degree '+str(poly) + ' ' + title)
     x = list()
     for each in obj_list[0]:
         x.append(each.hour)
@@ -35,9 +35,9 @@ def graph(obj_list, poly):
     for each in obj_list[0]:
         plt.scatter(each.hour, each.consumption, c='b')
         if poly == 3:
-            y = (weights[3] * (x ** 3)) + (weights[2] * (x ** 2)) + (weights[1] * x) + weights[0]
+            y = (weights[1] * x) + (weights[2] * (x ** 2)) + (weights[3] * (x ** 3)) + weights[0]
         elif poly == 2:
-            y = (weights[2] * (x ** 2)) + (weights[1] * x) + weights[0]
+            y = (weights[1] * x) + (weights[2] * (x ** 2))  + weights[0]
         elif poly == 1:
             y = (weights[1] * x) + weights[0]
         plt.plot(x, y, c='r')
@@ -55,19 +55,15 @@ def load(file):
         data = file.readline().split(",")
         energy = Energy(float(data[0]), float(data[1]))
         hr = (energy.hour - 5.00) / (20.00 - 5.00)
-        consum = (energy.consumption)
         energy.hour = hr
-        energy.consumption = consum
         test_objs.append(energy)
     return test_objs
 
 
 
-def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
+def fit_model(instance, numEpoch, train_size, alpha, poly = 1, indc = ''):
     epoch = 0               # number of training cycle
     error_amount = 5
-
-
     # create randomized weights for inputs and bias
     for i in range(4):
         weights.append(round(random.uniform(-0.5, 0.5), 2))
@@ -105,10 +101,10 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
                 weights[3] += (alpha * error) * (instance[i].hour ** 3)
 
     print('Degree of Function: ' + str(poly))
-    print('Total error: :', total_error)
-    print('Weights: ', weights)
+    print('Error:', total_error)
+    print('Run weights: ', weights)
     print('\n')
-    graph([instance], poly)
+    graph([instance], poly, indc)
 
 
 
@@ -131,8 +127,7 @@ test    = load(file4)
 
 train_data = [one, two, three]
 for i in range(1,4):
-    print(weights)
     weights.clear()
-    print(weights)
     for x in range(0,3):
         fit_model(train_data[x], numEpoch, train_size, alpha, i)
+    fit_model(test, numEpoch, train_size, alpha, i, 'TEST DAY 4')
