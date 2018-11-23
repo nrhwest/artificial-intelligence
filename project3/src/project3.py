@@ -51,104 +51,108 @@ def load(file):
     # load data into energy objects
     test_objs = list()
     for i in range(16):
-        data    = file.readline().split(",")
-        energy  = Energy(float(data[0]), float(data[1]))
-        hr      = (energy.hour - 5.00)  / (20.00 - 5.00)
-        consum  = (energy.consumption - 2.0) / (10.0 - 2.0)
+        data = file.readline().split(",")
+        energy = Energy(float(data[0]), float(data[1]))
+        hr = (energy.hour - 5.00) / (20.00 - 5.00)
+        consum = (energy.consumption - 2.0) / (10.0 - 2.0)
         energy.hour = hr
         energy.consumption = consum
         test_objs.append(energy)
     return test_objs
 
-def predict(activation, expected):
-    if activation >= expected:
-        return activation
-    else:
-        return -activation
+# def predict(activation, expected):
+#     if activation >= expected:
+#         return activation
+#     else:
+#         return -activation
 
 
 def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
-    epoch = 0               #number of training cycle
-    errorAmount = 1.0
-    answers = list()
-    for i in range(2):      #for input and bias
+    epoch = 0               # number of training cycle
+    error_amount = 5
+    # answers = list()
+
+    # create randomized weights for inputs and bias
+    for i in range(4):
         weights.append(round(random.uniform(-0.5, 0.5), 2))
-    while (epoch < numEpoch):
+
+    while (epoch < numEpoch and error_amount >= 5):
         epoch += 1
+
         for i in range(train_size):
-            bias    = 1 * weights[0]
+            bias = 1 * weights[0]
             desired = instance[i].consumption
             net = 0.0
+
             if poly == 1:
                 net = (instance[i].hour * weights[1]) + bias
             elif poly == 2:
-                try:
-                    net = (instance[i].hour * weights[1]) + (instance[i].hour * (weights[1] ** 2))+ bias
-                except OverflowError as o:
-                    net = d.Decimal(net)
-
+                net = (instance[i].hour * weights[1]) + ((instance[i].hour ** 2) * weights[2]) + bias
             elif poly == 3:
-                try:
-                    net = (instance[i].hour * weights[1]) + (instance[i].hour * (weights[1] ** 2))+ (instance[i].hour * (weights[1] ** 3))+ bias
-                except OverflowError as o:
-                    net = d.Decimal(net)
+                net = (instance[i].hour * weights[1]) + ((instance[i].hour ** 2) * weights[2]) + ((instance[i].hour ** 3) * weights[3]) + bias
 
-            predictedOutput = predict(net, desired)
+            # predictedOutput = predict(net, desired)
+            #
+            # try:
+            #     error = desired - predictedOutput
+            # except TypeError:
+            #     error = d.Decimal(desired) - d.Decimal(predictedOutput)
 
-            try:
-                error = desired - predictedOutput
-            except TypeError:
-                error = d.Decimal(desired) - d.Decimal(predictedOutput)
+            error = desired - net
 
-
-            if net >= desired:
-                errorAmount += 1 / 16
-            else:
-                errorAmount += 0
-
-            try:
+            if (poly == 1):
                 weights[0] += (alpha * error)
                 weights[1] += (alpha * error) * instance[i].hour
-            except TypeError:
-                weights[0] += (float(d.Decimal(alpha)) * float(d.Decimal(error)))
-                weights[1] += (float(d.Decimal(alpha)) * float(d.Decimal(error))) * float(d.Decimal(instance[i].hour))
+            elif (poly == 2):
+                weights[0] += (alpha * error)
+                weights[1] += (alpha * error) * instance[i].hour
+                weights[2] += (alpha * error) * instance[i].hour ** 2
+            elif (poly == 3):
+                weights[0] += (alpha * error)
+                weights[1] += (alpha * error) * instance[i].hour
+                weights[2] += (alpha * error) * instance[i].hour ** 2
+                weights[3] += (alpha * error) * instance[i].hour ** 3
 
-            if epoch + 1 == numEpoch:
-                answers.append(Energy(instance[i].hour, weights[1]))
+            # try:
+            #     weights[0] += (alpha * error)
+            #     weights[1] += (alpha * error) * instance[i].hour
+            # except TypeError:
+            #     weights[0] += (float(d.Decimal(alpha)) * float(d.Decimal(error)))
+            #     weights[1] += (float(d.Decimal(alpha)) * float(d.Decimal(error))) * float(d.Decimal(instance[i].hour))
+
+            # if epoch + 1 == numEpoch:
+            #     answers.append(Energy(instance[i].hour, weights[1]))
     stuff = [test, answers]
     graph(stuff)
     return answers, errorAmount
 
-def model_predict(model, test, poly = 1):
-    answers = list()
-    bias    = 1 * test[0].consumption
-    for i in range(1,len(test)):
-        net = 0.0
-        desired = test[i].consumption
-        if poly == 1:
-            net = (test[i].hour * model[i].consumption) + bias
-        elif poly == 2:
-            try:
-                net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ bias
-            except OverflowError as o:
-                net = d.Decimal(net)
-
-        elif poly == 3:
-            try:
-                net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ (test[i].hour * (model[i].consumption ** 3))+ bias
-            except OverflowError as o:
-                net = d.Decimal(net)
-
-        predictedOutput = predict(net, desired)
-        answers.append(Energy(test[i].hour, weights[1]*float(predictedOutput)))
-
-
-
+# def model_predict(model, test, poly = 1):
+#     answers = list()
+#     bias    = 1 * test[0].consumption
+#     for i in range(1,len(test)):
+#         net = 0.0
+#         desired = test[i].consumption
+#         if poly == 1:
+#             net = (test[i].hour * model[i].consumption) + bias
+#         elif poly == 2:
+#             try:
+#                 net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ bias
+#             except OverflowError as o:
+#                 net = d.Decimal(net)
+#
+#         elif poly == 3:
+#             try:
+#                 net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ (test[i].hour * (model[i].consumption ** 3))+ bias
+#             except OverflowError as o:
+#                 net = d.Decimal(net)
+#
+#         predictedOutput = predict(net, desired)
+#         answers.append(Energy(test[i].hour, weights[1]*float(predictedOutput)))
 
 
 
 alpha = 0.3
-numEpoch = 500
+numEpoch = 1000
 
 weights = []
 train_size = 16
@@ -164,8 +168,8 @@ model_one_1, error1 = fit_model(one, numEpoch, train_size, alpha, 1)
 model_one_2, error2 = fit_model(one, numEpoch, train_size, alpha, 2)
 model_one_3, error3 = fit_model(one, numEpoch, train_size, alpha, 3)
 one_models = [model_one_1, model_one_2, model_one_3]
-for i in range(len(one_models)):
-    model_predict(one_models[i], test, i+1)
+# for i in range(len(one_models)):
+#     model_predict(one_models[i], test, i+1)
 
 weights.clear()
 two     = load(file2)
@@ -173,8 +177,8 @@ model_two_1, error1 = fit_model(two, numEpoch, train_size, alpha, 1)
 model_two_2, error2 = fit_model(two, numEpoch, train_size, alpha, 2)
 model_two_3, error3 = fit_model(two, numEpoch, train_size, alpha, 3)
 two_models = [model_two_1, model_two_2, model_two_3]
-for i in range(len(two_models)):
-    model_predict(two_models[i], test, i+1)
+# for i in range(len(two_models)):
+#     model_predict(two_models[i], test, i+1)
 
 weights.clear()
 three     = load(file3)
@@ -182,5 +186,5 @@ model_three_1, error1 = fit_model(three, numEpoch, train_size, alpha, 1)
 model_three_2, error2 = fit_model(three, numEpoch, train_size, alpha, 2)
 model_three_3, error3 = fit_model(three, numEpoch, train_size, alpha, 3)
 three_models = [model_three_1, model_three_2, model_three_3]
-for i in range(len(three_models)):
-    model_predict(three_models[i], test, i+1)
+# for i in range(len(three_models)):
+#     model_predict(three_models[i], test, i+1)
