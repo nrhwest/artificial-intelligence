@@ -23,23 +23,24 @@ import decimal as d
 import math
 
 
-def graph(obj_list):
+def graph(obj_list, poly):
     colors = ['b', 'g', 'r' , 'c', 'm','y' , 'k' , 'w']
-    for each in range(len(obj_list)):
-        if each == len(obj_list) - 1:
-            x = list()
-            y = list()
-            for i in obj_list[each]:
-                x.append(i.hour)
-                y.append(i.consumption)
-            plt.plot(x, y, c=colors[each])
-            plt.xlabel('Hour')
-            plt.ylabel('Consumption')
-            plt.title('Prediction of Energy Consumption')
-
-        else:
-            for i in obj_list[each]:
-                plt.scatter(i.hour, i.consumption, c=colors[each])
+    plt.xlabel('Hour')
+    plt.ylabel('Consumption')
+    plt.title('Prediction of Energy Consumption')
+    x = list()
+    for each in obj_list[0]:
+        x.append(each.hour)
+    x = np.array(x)
+    for each in obj_list[0]:
+        plt.scatter(each.hour, each.consumption, c='b')
+        if poly == 3:
+            y = weights[0] * (x ** 3) + weights[1] * (x ** 2) + weights[2] * x + weights[3]
+        elif poly == 2:
+            y = weights[0] * (x ** 2) + weights[1] * x + weights[2]
+        elif poly == 1:
+            y = weights[0] * x + weights[1]
+        plt.plot(x, y, c='r')
     plt.show()
 
 class Energy:
@@ -60,17 +61,12 @@ def load(file):
         test_objs.append(energy)
     return test_objs
 
-# def predict(activation, expected):
-#     if activation >= expected:
-#         return activation
-#     else:
-#         return -activation
 
 
 def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
     epoch = 0               # number of training cycle
     error_amount = 5
-    # answers = list()
+
 
     # create randomized weights for inputs and bias
     for i in range(4):
@@ -78,7 +74,7 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
 
     while (epoch < numEpoch and error_amount >= 5):
         epoch += 1
-
+        total_error = 0
         for i in range(train_size):
             bias = 1 * weights[0]
             desired = instance[i].consumption
@@ -91,14 +87,9 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
             elif poly == 3:
                 net = (instance[i].hour * weights[1]) + ((instance[i].hour ** 2) * weights[2]) + ((instance[i].hour ** 3) * weights[3]) + bias
 
-            # predictedOutput = predict(net, desired)
-            #
-            # try:
-            #     error = desired - predictedOutput
-            # except TypeError:
-            #     error = d.Decimal(desired) - d.Decimal(predictedOutput)
-
             error = desired - net
+
+            total_error += error ** 2
 
             if (poly == 1):
                 weights[0] += (alpha * error)
@@ -113,41 +104,12 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
                 weights[2] += (alpha * error) * instance[i].hour ** 2
                 weights[3] += (alpha * error) * instance[i].hour ** 3
 
-            # try:
-            #     weights[0] += (alpha * error)
-            #     weights[1] += (alpha * error) * instance[i].hour
-            # except TypeError:
-            #     weights[0] += (float(d.Decimal(alpha)) * float(d.Decimal(error)))
-            #     weights[1] += (float(d.Decimal(alpha)) * float(d.Decimal(error))) * float(d.Decimal(instance[i].hour))
+    print('Degree of Function: ' + str(poly))
+    print('Total error: :', total_error)
+    print('Weights: ', weights)
+    print('\n')
+    graph([instance], poly)
 
-            # if epoch + 1 == numEpoch:
-            #     answers.append(Energy(instance[i].hour, weights[1]))
-    stuff = [test, answers]
-    graph(stuff)
-    return answers, errorAmount
-
-# def model_predict(model, test, poly = 1):
-#     answers = list()
-#     bias    = 1 * test[0].consumption
-#     for i in range(1,len(test)):
-#         net = 0.0
-#         desired = test[i].consumption
-#         if poly == 1:
-#             net = (test[i].hour * model[i].consumption) + bias
-#         elif poly == 2:
-#             try:
-#                 net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ bias
-#             except OverflowError as o:
-#                 net = d.Decimal(net)
-#
-#         elif poly == 3:
-#             try:
-#                 net = (test[i].hour * model[i].consumption) + (test[i].hour * (model[i].consumption ** 2))+ (test[i].hour * (model[i].consumption ** 3))+ bias
-#             except OverflowError as o:
-#                 net = d.Decimal(net)
-#
-#         predictedOutput = predict(net, desired)
-#         answers.append(Energy(test[i].hour, weights[1]*float(predictedOutput)))
 
 
 
@@ -162,29 +124,13 @@ file2 = open("data/train_data_2.txt", mode='r')
 file3 = open("data/train_data_3.txt", mode='r')
 file4 = open("data/test_data_4.txt", mode='r')
 
-test    = load(file4)
 one     = load(file1)
-model_one_1, error1 = fit_model(one, numEpoch, train_size, alpha, 1)
-model_one_2, error2 = fit_model(one, numEpoch, train_size, alpha, 2)
-model_one_3, error3 = fit_model(one, numEpoch, train_size, alpha, 3)
-one_models = [model_one_1, model_one_2, model_one_3]
-# for i in range(len(one_models)):
-#     model_predict(one_models[i], test, i+1)
-
-weights.clear()
 two     = load(file2)
-model_two_1, error1 = fit_model(two, numEpoch, train_size, alpha, 1)
-model_two_2, error2 = fit_model(two, numEpoch, train_size, alpha, 2)
-model_two_3, error3 = fit_model(two, numEpoch, train_size, alpha, 3)
-two_models = [model_two_1, model_two_2, model_two_3]
-# for i in range(len(two_models)):
-#     model_predict(two_models[i], test, i+1)
+three   = load(file3)
+test    = load(file4)
 
-weights.clear()
-three     = load(file3)
-model_three_1, error1 = fit_model(three, numEpoch, train_size, alpha, 1)
-model_three_2, error2 = fit_model(three, numEpoch, train_size, alpha, 2)
-model_three_3, error3 = fit_model(three, numEpoch, train_size, alpha, 3)
-three_models = [model_three_1, model_three_2, model_three_3]
-# for i in range(len(three_models)):
-#     model_predict(three_models[i], test, i+1)
+train_data = [one, two, three]
+for i in range(1,4):
+    weights.clear()
+    for x in range(0,3):
+        fit_model(train_data[x], numEpoch, train_size, alpha, i)
