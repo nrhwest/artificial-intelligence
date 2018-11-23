@@ -27,7 +27,7 @@ def graph(obj_list, poly):
     colors = ['b', 'g', 'r' , 'c', 'm','y' , 'k' , 'w']
     plt.xlabel('Hour')
     plt.ylabel('Consumption')
-    plt.title('Prediction of Energy Consumption')
+    plt.title('Prediction of Energy w/ degree '+str(poly))
     x = list()
     for each in obj_list[0]:
         x.append(each.hour)
