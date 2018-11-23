@@ -35,11 +35,11 @@ def graph(obj_list, poly):
     for each in obj_list[0]:
         plt.scatter(each.hour, each.consumption, c='b')
         if poly == 3:
-            y = weights[0] * (x ** 3) + weights[1] * (x ** 2) + weights[2] * x + weights[3]
+            y = (weights[1] * (x ** 3)) + (weights[2] * (x ** 2)) + (weights[3] * x) + weights[0]
         elif poly == 2:
-            y = weights[0] * (x ** 2) + weights[1] * x + weights[2]
+            y = (weights[1] * (x ** 2)) + (weights[2] * x) + weights[0]
         elif poly == 1:
-            y = weights[0] * x + weights[1]
+            y = (weights[1] * x) + weights[0]
         plt.plot(x, y, c='r')
     plt.show()
 
@@ -55,7 +55,7 @@ def load(file):
         data = file.readline().split(",")
         energy = Energy(float(data[0]), float(data[1]))
         hr = (energy.hour - 5.00) / (20.00 - 5.00)
-        consum = (energy.consumption - 2.0) / (10.0 - 2.0)
+        consum = (energy.consumption)
         energy.hour = hr
         energy.consumption = consum
         test_objs.append(energy)
@@ -97,12 +97,12 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
             elif (poly == 2):
                 weights[0] += (alpha * error)
                 weights[1] += (alpha * error) * instance[i].hour
-                weights[2] += (alpha * error) * instance[i].hour ** 2
+                weights[2] += (alpha * error) * (instance[i].hour ** 2)
             elif (poly == 3):
                 weights[0] += (alpha * error)
                 weights[1] += (alpha * error) * instance[i].hour
-                weights[2] += (alpha * error) * instance[i].hour ** 2
-                weights[3] += (alpha * error) * instance[i].hour ** 3
+                weights[2] += (alpha * error) * (instance[i].hour ** 2)
+                weights[3] += (alpha * error) * (instance[i].hour ** 3)
 
     print('Degree of Function: ' + str(poly))
     print('Total error: :', total_error)
@@ -113,8 +113,8 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1):
 
 
 
-alpha = 0.3
-numEpoch = 1000
+alpha = 0.1
+numEpoch = 10000
 
 weights = []
 train_size = 16
@@ -131,6 +131,8 @@ test    = load(file4)
 
 train_data = [one, two, three]
 for i in range(1,4):
+    print(weights)
     weights.clear()
+    print(weights)
     for x in range(0,3):
         fit_model(train_data[x], numEpoch, train_size, alpha, i)
