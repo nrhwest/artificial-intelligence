@@ -95,13 +95,11 @@ def fit_model(instance, numEpoch, train_size, alpha, poly = 1, indc = ''):
 
     print('Polynominal Degree: ' + str(poly))
     print('Error:', total_error)
-    print('Weights: ', weights)
-    print('\n')
     graph([instance], poly, indc)
 
 
 alpha = 0.3  # learning rate
-numEpoch = 5000  # number of epochs for training
+numEpoch = 4000  # number of epochs for training
 weights = []
 train_size = 16  # size of the training set
 
@@ -119,7 +117,7 @@ train_data = [one, two, three]
 
 # train on all three days - test on day 4
 for i in range(1, 4):
-    weights.clear()
+    weights.clear()  # refresh weights after every training and testing process
     for x in range(0, 3):
         fit_model(train_data[x], numEpoch, train_size, alpha, i)
     fit_model(test, numEpoch, train_size, alpha, i, 'TEST DAY 4')
