@@ -91,7 +91,7 @@ def train(file_name, polynomial):
             desire = energy[i]
             actual = net
             error = desire - actual
-            correction = 0.1 * error
+            correction = 0.3 * error
 
             total_error += error ** 2
 
