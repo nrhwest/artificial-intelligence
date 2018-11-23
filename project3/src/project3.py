@@ -35,9 +35,9 @@ def graph(obj_list, poly):
     for each in obj_list[0]:
         plt.scatter(each.hour, each.consumption, c='b')
         if poly == 3:
-            y = (weights[1] * (x ** 3)) + (weights[2] * (x ** 2)) + (weights[3] * x) + weights[0]
+            y = (weights[3] * (x ** 3)) + (weights[2] * (x ** 2)) + (weights[1] * x) + weights[0]
         elif poly == 2:
-            y = (weights[1] * (x ** 2)) + (weights[2] * x) + weights[0]
+            y = (weights[2] * (x ** 2)) + (weights[1] * x) + weights[0]
         elif poly == 1:
             y = (weights[1] * x) + weights[0]
         plt.plot(x, y, c='r')
