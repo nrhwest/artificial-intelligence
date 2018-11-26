@@ -22,7 +22,7 @@ def remove_stop_words(sentence_list, stop_words):
     return new_list
 
 
-def stemming(sentence_list):
+def porter_stemming(sentence_list):
     stemmed_list = list()
     stemmer = PorterStemmer()
     for line in sentence_list:
@@ -64,7 +64,7 @@ def main():
     sentence_list = tokenize(sentences)
     sentence_list = remove_stop_words(sentence_list, stop_words)
 
-    stemmed_list = stemming(sentence_list)
+    stemmed_list = porter_stemming(sentence_list)
     occurrences = count_occurrences(stemmed_list)
 
     # create_tdm(freq_vector, stemmed_sentence_list)
