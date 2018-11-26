@@ -8,18 +8,7 @@ import re
 import sys
 import string
 from collections import Counter
-
-# import textmining
-# from textmining.stemmer import textmining
 from Porter_Stemmer_Python import PorterStemmer
-
-
-# def load_sentences():
-#     return re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
-#
-#
-# def load_stop_words():
-#     return open("stop_words.txt", 'r').read().split('\n')
 
 
 def tokenize(sentence_list):
@@ -52,27 +41,21 @@ def count_occurrences(sentence_list):
     return count
 
 
-# def create_tdm(freq_vector, sentence_list):
-#     # print(freq_vector)
-#     print(len(freq_vector))
-#     # tdm = freq_vector.copy()
-#     tdm = dict.fromkeys(freq_vector, 0)
-#
-#     for i in range(len(freq_vector)):
-#
-#
-#     for j in range(len(sentence_list)):
-#         for key in freq_vector:
-#             # print(sentence_list[j])
-#             # print(sentence_list[])
-#             if (sentence_list[j][0] == key):
-#                 # print(sentence_list[j][0])
-#                 # counts = Counter(sentence_list[i])
-#                 tdm[[j][key]] += 1
-#                 # tdm.append(sentence_list[j].count(freq_vector(i)))
-#                 # print(str(tdm))
-#                 print(tdm)
-#                 break
+def create_tdm(freq_vector, sentence_list):
+    # tdm = freq_vector.copy()
+    tdm = dict.fromkeys(freq_vector, 0)
+    for j in range(len(sentence_list)):
+        for key in freq_vector:
+            # print(sentence_list[j])
+            # print(sentence_list[])
+            if (sentence_list[j][0] == key):
+                # print(sentence_list[j][0])
+                # counts = Counter(sentence_list[i])
+                tdm[[j][key]] += 1
+                # tdm.append(sentence_list[j].count(freq_vector(i)))
+                # print(str(tdm))
+                print(tdm)
+                break
 
 def main():
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
@@ -93,7 +76,7 @@ def main():
         for word in sentence:                       # each token in list
             # if (freq_vector.__contains__(word)):
             if (word in occurrences):
-                vector[occurrences.get(word)] += 1  # increment the words occurrence for given sentence?
+                vector[occurrences.get(word)] += 1  # increment the words occurrence from a given sentence?
         all_records.append(vector)
 
     print(all_records)
