@@ -11,13 +11,13 @@ from collections import Counter
 from Porter_Stemmer_Python import PorterStemmer
 
 
-def tokenize(sentence_list):  # return a list of tokens within another list
+def tokenize(sentence_list):                      # return a list of tokens within another list
     return list(map(lambda sentence: sentence.lower().split(), sentence_list))
 
 
 def remove_stop_words(sentence_list, stop_words):
     new_sentence_list = list()
-    for line in sentence_list:  # remove/filter out stop_words from the sentence add to new list
+    for line in sentence_list:                    # remove/filter out stop_words from the sentence add to new list
         new_sentence_list.append(list(filter(lambda word: not stop_words.__contains__(word), line)))
 
     return new_sentence_list
@@ -25,8 +25,8 @@ def remove_stop_words(sentence_list, stop_words):
 
 def porter_stemming(sentence_list):
     stemmed_list = list()
-    stemmer = PorterStemmer()  # instantiate porter stemmer algorithm
-    for line in sentence_list:  # loop through sentence_list, stem each word, add to new list
+    stemmer = PorterStemmer()                     # instantiate porter stemmer algorithm
+    for line in sentence_list:                    # loop through sentence_list, stem each word, add to new list
         stemmed_list.append(list(map(lambda word: stemmer.stem(word, 0, len(word)-1), line)))
 
     return stemmed_list
@@ -56,6 +56,14 @@ def create_tdm(occurrences, stemmed_list):
     return tdm
 
 
+def wta_clustering(tdm, stemmed_list):
+    
+
+
+def normalization(tdm):
+
+
+
 def main():
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
     stop_words = open("stop_words.txt", 'r').read().split('\n')
@@ -67,6 +75,7 @@ def main():
     occurrences = count_occurrences(stemmed_list)
 
     tdm = create_tdm(occurrences, stemmed_list)
+    print(tdm)
 
 
 if __name__ == '__main__':
