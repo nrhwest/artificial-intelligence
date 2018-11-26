@@ -7,6 +7,8 @@ CMSC 409
 import re
 import sys
 import string
+# import textmining
+# from textmining.stemmer import textmining
 from Porter_Stemmer_Python import PorterStemmer
 
 
@@ -30,13 +32,24 @@ def remove_stop_words(sentence_list, stop_words):
 
 
 def stemming(sentence_list):
-    new_list = list()
+    stemmed_list = list()
     stemmer = PorterStemmer()
-
     for line in sentence_list:
-        new_list.append(list(map(lambda word: stemmer.stem(word, 0, len(word)-1), line)))
+        stemmed_list.append(list(map(lambda word: stemmer.stem(word, 0, len(word)-1), line)))
 
-    return new_list
+    return stemmed_list
+
+def count_occurrences(sentence_list):
+    count = dict()
+
+    for sentence in sentence_list:
+        print(sentence)
+        for word in sentence:
+            if word in count:
+                count[word] += 1
+            else:
+                count[word] = 1
+    return count
 
 def main():
     sentences = load_sentences()
@@ -46,9 +59,10 @@ def main():
     sentence_list = remove_stop_words(sentence_list, stop_words)
 
     stemmed_sentence_list = stemming(sentence_list)
-    print(stemmed_sentence_list)
 
-    # print(sentence_list)
+    num_occurrences = count_occurrences(stemmed_sentence_list)
+
+    print(num_occurrences)
 
 if __name__ == '__main__':
     main()
