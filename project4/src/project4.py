@@ -7,6 +7,8 @@ CMSC 409
 import re
 import sys
 import string
+from collections import Counter
+
 # import textmining
 # from textmining.stemmer import textmining
 from Porter_Stemmer_Python import PorterStemmer
@@ -39,17 +41,53 @@ def stemming(sentence_list):
 
     return stemmed_list
 
-def count_occurrences(sentence_list):
+def frequency_vector(sentence_list):
     count = dict()
-
     for sentence in sentence_list:
-        print(sentence)
         for word in sentence:
             if word in count:
                 count[word] += 1
             else:
                 count[word] = 1
     return count
+
+
+def create_tdm(freq_vector, sentence_list):
+    # print(freq_vector)
+    print(len(freq_vector))
+    # tdm = freq_vector.copy()
+    tdm = dict.fromkeys(freq_vector, 0)
+    # print(tdm)
+    # print(tdm)
+    # exit()
+    # print(sentence_list[0])
+    # tdm = [0] * (len(freq_vector))
+    #for w in sentence_list[0]:
+    #    tdm.append(sentence_list[0](w))
+    #    print(str(tdm)
+    # for key in freq_vector:
+    #     for j in range(len(sentence_list)):
+    #         # print(sentence_list[j])
+    #         if (sentence_list[j][0] == key):
+    #             # print(sentence_list[j][0])
+    #             # counts = Counter(sentence_list[i])
+    #             tdm[[key][j]] += 1
+    #             # tdm.append(sentence_list[j].count(freq_vector(i)))
+    #             # print(str(tdm))
+    #             print(tdm)
+    #             break
+    for j in range(len(sentence_list)):
+        for key in freq_vector:
+            # print(sentence_list[j])
+            # print(sentence_list[])
+            if (sentence_list[j][0] == key):
+                # print(sentence_list[j][0])
+                # counts = Counter(sentence_list[i])
+                tdm[[j][key]] += 1
+                # tdm.append(sentence_list[j].count(freq_vector(i)))
+                # print(str(tdm))
+                print(tdm)
+                break
 
 def main():
     sentences = load_sentences()
@@ -59,10 +97,13 @@ def main():
     sentence_list = remove_stop_words(sentence_list, stop_words)
 
     stemmed_sentence_list = stemming(sentence_list)
+    print(len(stemmed_sentence_list))
+    # counts = Counter(stemmed_sentence_list[0])
+    # print(counts)
+    freq_vector = frequency_vector(stemmed_sentence_list)
 
-    num_occurrences = count_occurrences(stemmed_sentence_list)
+    create_tdm(freq_vector, stemmed_sentence_list)
 
-    print(num_occurrences)
 
 if __name__ == '__main__':
     main()
