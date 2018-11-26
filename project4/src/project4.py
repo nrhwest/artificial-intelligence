@@ -76,10 +76,11 @@ def main():
         for word in sentence:                       # each token in list
             # if (freq_vector.__contains__(word)):
             if (word in occurrences):
-                vector[occurrences.get(word)] += 1  # increment the words occurrence from a given sentence?
+                # print("occurrences.get(word) = ", occurrences.get(word))
+                vector[occurrences.index(word)] += 1  # increment the words occurrence from a given sentence?
         all_records.append(vector)
 
-    print(all_records)
+    # print(all_records)
 
 
 if __name__ == '__main__':
