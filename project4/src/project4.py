@@ -41,21 +41,18 @@ def count_occurrences(sentence_list):
     return count
 
 
-def create_tdm(freq_vector, sentence_list):
-    # tdm = freq_vector.copy()
-    tdm = dict.fromkeys(freq_vector, 0)
-    for j in range(len(sentence_list)):
-        for key in freq_vector:
-            # print(sentence_list[j])
-            # print(sentence_list[])
-            if (sentence_list[j][0] == key):
-                # print(sentence_list[j][0])
-                # counts = Counter(sentence_list[i])
-                tdm[[j][key]] += 1
-                # tdm.append(sentence_list[j].count(freq_vector(i)))
-                # print(str(tdm))
-                print(tdm)
-                break
+def create_tdm(occurrences, stemmed_list):
+    tdm = list()
+    for sentence in stemmed_list:                 # each sentence (list) in stemmed_list
+        vector = [0] * len(occurrences)           # make freq_vector the size of length of occurrences
+        for word in sentence:                     # each token in list
+            if (word in occurrences):
+                tmp = list(occurrences)
+                vector[tmp.index(word)] += 1      # increment the words occurrence from a given sentence?
+        tdm.append(vector)
+
+    return tdm
+
 
 def main():
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
@@ -67,21 +64,8 @@ def main():
     stemmed_list = porter_stemming(sentence_list)
     occurrences = count_occurrences(stemmed_list)
 
-    # create_tdm(freq_vector, stemmed_sentence_list)
-
-    # not right - but getting close
-    all_records = list()
-    for sentence in stemmed_list:                   # each sentence (list) in stemmed_list
-        vector = [0] * len(occurrences)             # make freq_vector the size of length of occurrences
-        for word in sentence:                       # each token in list
-            # if (freq_vector.__contains__(word)):
-            if (word in occurrences):
-                # print("occurrences.get(word) = ", occurrences.get(word))
-                tmp = list(occurrences)
-                vector[tmp.index(word)] += 1  # increment the words occurrence from a given sentence?
-        all_records.append(vector)
-
-    print(all_records)
+    tdm = create_tdm(occurrences, stemmed_list)
+    print(tdm)
 
 
 if __name__ == '__main__':
