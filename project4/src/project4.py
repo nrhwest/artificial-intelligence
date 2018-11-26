@@ -77,10 +77,11 @@ def main():
             # if (freq_vector.__contains__(word)):
             if (word in occurrences):
                 # print("occurrences.get(word) = ", occurrences.get(word))
-                vector[occurrences.index(word)] += 1  # increment the words occurrence from a given sentence?
+                tmp = list(occurrences)
+                vector[tmp.index(word)] += 1  # increment the words occurrence from a given sentence?
         all_records.append(vector)
 
-    # print(all_records)
+    print(all_records)
 
 
 if __name__ == '__main__':
