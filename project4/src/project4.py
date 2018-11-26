@@ -1,6 +1,7 @@
 '''
 Written by Yonathan Mekonnen, Derrick Adeji, Nathan West
 CMSC 409
+11/25/18
 '''
 
 import re
@@ -33,18 +34,19 @@ def stemming(sentence_list):
     stemmer = PorterStemmer()
 
     for line in sentence_list:
-        new_list.append(list(filter(lambda word: stemmer.stem(word, 0, len(word)-1), line)))
+        new_list.append(list(map(lambda word: stemmer.stem(word, 0, len(word)-1), line)))
 
-    print(new_list)
+    return new_list
 
 def main():
     sentences = load_sentences()
     stop_words = load_stop_words()
 
-    # stemmer = PorterStemmer()
     sentence_list = tokenize(sentences)
     sentence_list = remove_stop_words(sentence_list, stop_words)
-    stemming(sentence_list)
+
+    stemmed_sentence_list = stemming(sentence_list)
+    print(stemmed_sentence_list)
 
     # print(sentence_list)
 
