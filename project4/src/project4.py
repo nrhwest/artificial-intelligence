@@ -8,7 +8,9 @@ import re
 import sys
 import csv
 import string
+import random
 from collections import Counter
+import numpy as np
 from Porter_Stemmer_Python import PorterStemmer
 
 
@@ -62,17 +64,39 @@ def print_to_csv(tdm):  # not sure if this is correct
         writer = csv.writer(file, delimiter=',')
         writer.writerow(tdm)
 
-# def wta_clustering(tdm, stemmed_list):
-#
-#
-#
+
+def wta_clustering(tdm, stemmed_list, training_size, alpha):
+    count = 5
+    weights = np.random.rand(5, len(tdm[0]))
+
+    # print(weights)
+    # print(weights[0])
+    for i in range(training_size):
+
+        for vector in tdm:
+            distances = np.zeros(len(weights))
+
+            for x in range(len(weights)):
+                distances[x] = 0
+
+                for y in range(len(vector)):
+                    val = pow((vector[y] - weights[x][y]), 2)
+                    distances[x] += val
+
+            index = -1
+            for x in range(len(distances)):
+                if distances[x] < distances[index]:
+                    index = i
+            print(index)
 # def normalization(tdm):
-#
+
 
 
 def main():
 
-    # tdm_file = open("term_document_matrix.csv", 'w')
+    training_size = 500
+    alpha = 0.3
+
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
     stop_words = open("stop_words.txt", 'r').read().split('\n')
 
@@ -83,10 +107,10 @@ def main():
     occurrences = combined_stemmed_words(stemmed_list)
 
     tdm = list(occurrences) + create_tdm(occurrences, stemmed_list)
+    # print_to_csv(tdm)
 
-    print_to_csv(tdm)
-    # print(tdm)
-
+    tdm2 = create_tdm(occurrences, stemmed_list)
+    wta_clustering(tdm2, stemmed_list, training_size, alpha)
 
 if __name__ == '__main__':
     main()
