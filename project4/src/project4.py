@@ -64,13 +64,20 @@ def print_to_csv(tdm):  # not sure if this is correct
         writer = csv.writer(file, delimiter=',')
         writer.writerow(tdm)
 
+def euclidean_distance(count, distances, weights, vector):
+    for i in range(count):
+        distances[i] = 0
+        for j in range(len(vector)):
+            val = (weights[i][j] - vector[j]) ** 2
+            distances[i] += val
 
 def wta_clustering(tdm, stemmed_list, training_size, alpha):
     count = 5
     weights = np.random.rand(5, len(tdm[0]))
 
-    print(weights)
+    # print(weights)
     # print(weights[0])
+    final = list()
     distances = np.zeros(len(weights))
     for i in range(training_size):
         distances = np.zeros(len(weights))
@@ -88,19 +95,26 @@ def wta_clustering(tdm, stemmed_list, training_size, alpha):
         #     for x in range(len(distances)):
         #         if distances[x] < distances[index]:
         #             index = i
-            for i in range(count):
-                distances[i] = 0
-                for j in range(len(vector)):
-                    # print(weights[i][j], vector[j])
-                    val = (weights[i][j] - vector[j]) ** 2
-                    distances[i] += val
+            euclidean_distance(count, distances, weights, vector)
+            # for i in range(count):
+            #     distances[i] = 0
+            #     for j in range(len(vector)):
+            #         val = (weights[i][j] - vector[j]) ** 2
+            #         distances[i] += val
 
             idx = np.argmin(distances)  #index of the best matching unit
             #update weight of the best matching unit/ winning cluster
             for x in range(len(weights[idx])):
                 weights[idx][x] = weights[idx][x] + (alpha * (vector[x] - weights[idx][x]))
+    # run distances to retrieve final answers
+    for vector in tdm:
+        distances = np.zeros(len(weights))
+        euclidean_distance(count, distances, weights, vector)
+        idx = np.argmin(distances)  #index of the best matching unit
+        final.append(idx)
+    print(final)
 
-    print(weights)
+
 
 
 
