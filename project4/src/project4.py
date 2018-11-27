@@ -64,64 +64,32 @@ def print_to_csv(tdm):  # not sure if this is correct
         writer = csv.writer(file, delimiter=',')
         writer.writerow(tdm)
 
-def euclidean_distance(count, distances, weights, vector):
-    for i in range(count):
+def euclidean_distance(clusters, distances, weights, vector):
+    for i in range(clusters):
         distances[i] = 0
         for j in range(len(vector)):
             val = (weights[i][j] - vector[j]) ** 2
             distances[i] += val
 
-def wta_clustering(tdm, stemmed_list, training_size, alpha):
-    count = 5
-    weights = np.random.rand(5, len(tdm[0]))
+def wta_clustering(tdm, stemmed_list, training_size, alpha, clusters):
+    weights = np.random.rand(clusters, len(tdm[0]))
 
-    # print(weights)
-    # print(weights[0])
     final = list()
     distances = np.zeros(len(weights))
+    tdm = np.array(tdm)
     for i in range(training_size):
         distances = np.zeros(len(weights))
         for vector in tdm:
-        #     distances = np.zeros(len(weights))
-        #
-        #     for x in range(len(weights)):
-        #         distances[x] = 0
-        #
-        #         for y in range(len(vector)):
-        #             val = pow((vector[y] - weights[x][y]), 2)
-        #             distances[x] += val
-        #
-        #     index = -1
-        #     for x in range(len(distances)):
-        #         if distances[x] < distances[index]:
-        #             index = i
-            euclidean_distance(count, distances, weights, vector)
-            # for i in range(count):
-            #     distances[i] = 0
-            #     for j in range(len(vector)):
-            #         val = (weights[i][j] - vector[j]) ** 2
-            #         distances[i] += val
-
-            idx = np.argmin(distances)  #index of the best matching unit
-            #update weight of the best matching unit/ winning cluster
-            for x in range(len(weights[idx])):
-                weights[idx][x] = weights[idx][x] + (alpha * (vector[x] - weights[idx][x]))
+            euclidean_distance(clusters, distances, weights, vector)
+            idx = np.argmin(distances)                      #index of the best matching unit
+            weights[idx] = weights[idx] + alpha * vector    #update weight of the best matching unit/ winning cluster
     # run distances to retrieve final answers
     for vector in tdm:
         distances = np.zeros(len(weights))
-        euclidean_distance(count, distances, weights, vector)
+        euclidean_distance(clusters, distances, weights, vector)
         idx = np.argmin(distances)  #index of the best matching unit
         final.append(idx)
-    print(final)
-
-
-
-
-
-
-            # print(index)
-
-# def normalization(tdm):
+    return final
 
 
 
@@ -129,7 +97,7 @@ def main():
 
     training_size = 500
     alpha = 0.3
-
+    num_clusters = 8
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
     stop_words = open("stop_words.txt", 'r').read().split('\n')
 
@@ -143,7 +111,16 @@ def main():
     # print_to_csv(tdm)
 
     tdm2 = create_tdm(occurrences, stemmed_list)
-    wta_clustering(tdm2, stemmed_list, training_size, alpha)
+    results = wta_clustering(tdm2, stemmed_list, training_size, alpha, clusters=num_clusters)
+    original_sentences = open("sentences.txt", 'r').read().split('\n')
+    print(results)
+    for i in range(num_clusters):
+        print("Cluster {}: ".format(i))
+        print("------------")
+        for x in range(len(results)):
+            if results[x] == i:
+                print(original_sentences[x])
+
 
 if __name__ == '__main__':
     main()
