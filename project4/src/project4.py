@@ -80,15 +80,6 @@ def euclidean_distance(clusters, distances, weights, vector):
             val = (weights[i][j] - vector[j]) ** 2
             distances[i] += val
 
-<<<<<<< HEAD
-=======
-def euclidean_distance(clusters, distances, weights, vector):
-    for i in range(clusters):
-        distances[i] = 0
-        for j in range(len(vector)):
-            val = (weights[i][j] - vector[j]) ** 2
-            distances[i] += val
->>>>>>> 00adcc572f4fc57adfee172c64e12993fcda8568
 
 def wta_clustering(tdm, stemmed_list, training_size, alpha, clusters):
     weights = np.random.rand(clusters, len(tdm[0]))
@@ -96,7 +87,6 @@ def wta_clustering(tdm, stemmed_list, training_size, alpha, clusters):
     final = list()
     distances = np.zeros(len(weights))
     tdm = np.array(tdm)
-<<<<<<< HEAD
 
     for i in range(training_size):
         for vector in tdm:
@@ -105,26 +95,12 @@ def wta_clustering(tdm, stemmed_list, training_size, alpha, clusters):
             index = np.argmin(distances)                          # index of the best matching unit
             weights[index] = weights[index] + alpha * vector    # update weight of the best matching unit/ winning cluster
 
-=======
-    for i in range(training_size):
-        distances = np.zeros(len(weights))
-        for vector in tdm:
-            euclidean_distance(clusters, distances, weights, vector)
-            idx = np.argmin(distances)                      #index of the best matching unit
-            weights[idx] = weights[idx] + alpha * vector    #update weight of the best matching unit/ winning cluster
->>>>>>> 00adcc572f4fc57adfee172c64e12993fcda8568
     # run distances to retrieve final answers
     for vector in tdm:
         distances = np.zeros(len(weights))
         euclidean_distance(clusters, distances, weights, vector)
-<<<<<<< HEAD
         index = np.argmin(distances)                            # index of the best matching unit
         final.append(index)
-=======
-        idx = np.argmin(distances)  #index of the best matching unit
-        final.append(idx)
-    return final
->>>>>>> 00adcc572f4fc57adfee172c64e12993fcda8568
 
     return final
 
@@ -133,10 +109,7 @@ def main():
     training_size = 1000
     alpha = 0.3
     num_clusters = 8
-<<<<<<< HEAD
 
-=======
->>>>>>> 00adcc572f4fc57adfee172c64e12993fcda8568
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
     stop_words = open("stop_words.txt", 'r').read().split('\n')
 
@@ -148,17 +121,11 @@ def main():
 
     tdm = list(occurrences) + create_tdm(occurrences, stemmed_list)
     tdm2 = create_tdm(occurrences, stemmed_list)
-<<<<<<< HEAD
 
     results = wta_clustering(tdm2, stemmed_list, training_size, alpha, clusters=num_clusters)
 
     original_sentences = open("sentences.txt", 'r').read().split('\n')
 
-=======
-    results = wta_clustering(tdm2, stemmed_list, training_size, alpha, clusters=num_clusters)
-    original_sentences = open("sentences.txt", 'r').read().split('\n')
-    print(results)
->>>>>>> 00adcc572f4fc57adfee172c64e12993fcda8568
     for i in range(num_clusters):
         print("Cluster {}: ".format(i))
         print("------------")
