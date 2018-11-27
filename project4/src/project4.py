@@ -6,6 +6,7 @@ CMSC 409
 
 import re
 import sys
+import csv
 import string
 from collections import Counter
 from Porter_Stemmer_Python import PorterStemmer
@@ -31,7 +32,7 @@ def porter_stemming(sentence_list):
 
     return stemmed_list
 
-def count_occurrences(sentence_list):
+def combined_stemmed_words(sentence_list):
     count = dict()
     for sentence in sentence_list:
         for word in sentence:
@@ -56,15 +57,22 @@ def create_tdm(occurrences, stemmed_list):
     return tdm
 
 
-def wta_clustering(tdm, stemmed_list):
-    
+def print_to_csv(tdm):  # not sure if this is correct
+    with open("term_document_matrix.csv", 'w') as file:
+        writer = csv.writer(file, delimiter=',')
+        writer.writerow(tdm)
 
-
-def normalization(tdm):
-
+# def wta_clustering(tdm, stemmed_list):
+#
+#
+#
+# def normalization(tdm):
+#
 
 
 def main():
+
+    # tdm_file = open("term_document_matrix.csv", 'w')
     sentences = re.sub(r"[^A-z \n]", "", open("sentences.txt", 'r').read().lower()).split('\n')
     stop_words = open("stop_words.txt", 'r').read().split('\n')
 
@@ -72,10 +80,12 @@ def main():
     sentence_list = remove_stop_words(sentence_list, stop_words)
 
     stemmed_list = porter_stemming(sentence_list)
-    occurrences = count_occurrences(stemmed_list)
+    occurrences = combined_stemmed_words(stemmed_list)
 
-    tdm = create_tdm(occurrences, stemmed_list)
-    print(tdm)
+    tdm = list(occurrences) + create_tdm(occurrences, stemmed_list)
+
+    print_to_csv(tdm)
+    # print(tdm)
 
 
 if __name__ == '__main__':
