@@ -15,7 +15,6 @@ import statistics as stat
 def graph(class_summaries):
     plt.xlabel('Mean')
     plt.ylabel('Standard Deviation')
-    bins = 20
     for key, value in class_summaries.items():
         mean = value[0]
         stdev = value[1]
